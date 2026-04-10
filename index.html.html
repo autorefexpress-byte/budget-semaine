@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#1a56a0">
+<title>Budget semaine</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+:root{--blue:#1a56a0;--blue-light:#e8f0fb;--red:#c0392b;--red-light:#fdecea;--orange:#d4720a;--orange-light:#fef3e2;--green:#1e7e4a;--bg:#f2f4f8;--card:#ffffff;--text:#1a1a2e;--muted:#7a7f9a;--border:rgba(0,0,0,0.08);--radius:18px;--radius-sm:12px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;display:flex;flex-direction:column;max-width:430px;margin:0 auto;overflow-x:hidden;}
+.header{background:var(--blue);padding:env(safe-area-inset-top,12px) 20px 0;color:white;}
+.header-top{display:flex;justify-content:space-between;align-items:center;padding:14px 0 16px;}
+.header-top h1{font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#4caf50;display:inline-block;flex-shrink:0;}
+.sync-dot.off{background:#f44336;}
+.sync-dot.loading{background:#FAC775;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.stats-strip{background:var(--card);display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--border);}
+.stat-item{padding:14px 16px;border-right:1px solid var(--border);}
+.stat-item:last-child{border-right:none;}
+.stat-label{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.stat-val{font-size:14px;font-weight:600;}
+.stat-val.red{color:var(--red);}
+.stat-val.grn{color:var(--green);}
+.alert{margin:12px 16px 0;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;font-weight:500;display:none;}
+.alert.show{display:block;}
+.alert.warn{background:var(--orange-light);color:var(--orange);}
+.alert.danger{background:var(--red-light);color:var(--red);}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(80px + env(safe-area-inset-bottom,0px));}
+.form-card{background:var(--card);margin:12px 16px 0;border-radius:var(--radius);padding:16px;border:1px solid var(--border);}
+.form-title{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;}
+.who-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.who-btn{padding:9px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);text-align:center;transition:all .15s;}
+.who-btn.active{background:var(--blue-light);border-color:var(--blue);color:var(--blue);}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px;}
+.cat-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 4px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-size:11px;color:var(--muted);font-family:inherit;transition:all .15s;}
+.cat-btn .ce{font-size:20px;}
+.cat-btn.active{background:var(--blue-light);border-color:var(--blue);color:var(--blue);font-weight:600;}
+.inputs-row{display:flex;gap:8px;margin-bottom:12px;}
+.input-wrap{flex:1;}
+.input-wrap label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px;font-weight:500;}
+.input-wrap input{width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-family:inherit;font-size:15px;color:var(--text);outline:none;-webkit-appearance:none;}
+.input-wrap input:focus{border-color:var(--blue);background:white;}
+.input-amount{font-size:18px !important;font-weight:600;}
+.btn-add{width:100%;padding:13px;border-radius:var(--radius-sm);border:none;background:var(--blue);color:white;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s,transform .1s;}
+.btn-add:active{opacity:.85;transform:scale(.98);}
+.tx-section{margin:16px 16px 0;}
+.tx-section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.tx-section-head span{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.tx-section-head button{font-size:12px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:inherit;}
+.tx-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.day-label{font-size:12px;font-weight:600;color:var(--muted);padding:12px 14px 6px;background:var(--bg);}
+.tx-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--border);}
+.tx-item:last-child{border-bottom:none;}
+.tx-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.tx-info{flex:1;min-width:0;}
+.tx-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tx-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.who-badge{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:6px;margin-left:4px;}
+.who-badge.moi{background:#e8f0fb;color:#1a56a0;}
+.who-badge.elle{background:#fce8f0;color:#a0195a;}
+.tx-right{display:flex;align-items:center;gap:8px;}
+.tx-amt{font-size:15px;font-weight:600;color:var(--red);white-space:nowrap;}
+.tx-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:0;}
+.empty-msg{text-align:center;padding:28px;color:var(--muted);font-size:14px;}
+.hist-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.hist-item{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border);}
+.hist-item:last-child{border-bottom:none;}
+.hist-week{font-size:13px;font-weight:500;}
+.hist-dates{font-size:11px;color:var(--muted);margin-top:2px;}
+.hist-amt.over{color:var(--red);}
+.hist-amt.ok{color:var(--green);}
+.hist-pct{font-size:11px;color:var(--muted);text-align:right;margin-top:2px;}
+.tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--card);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:100;}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 12px;cursor:pointer;gap:3px;border:none;background:none;font-family:inherit;}
+.tab-icon{font-size:22px;}
+.tab-label{font-size:10px;color:var(--muted);font-weight:500;}
+.tab.active .tab-label{color:var(--blue);}
+.screen{display:none;}
+.screen.active{display:block;}
+.setup-wrap{display:flex;flex:1;align-items:center;justify-content:center;min-height:100dvh;background:var(--bg);}
+.setup-box{padding:32px 24px;text-align:center;max-width:360px;width:100%;}
+.setup-box h2{font-size:22px;font-weight:600;margin-bottom:8px;}
+.setup-box p{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6;}
+.setup-box input{width:100%;padding:14px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:white;font-family:inherit;font-size:18px;font-weight:500;text-align:center;outline:none;margin-bottom:16px;}
+.setup-box input:focus{border-color:var(--blue);}
+.setup-box button{width:100%;padding:14px;border-radius:var(--radius-sm);border:none;background:var(--blue);color:white;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<div id="setup-screen" style="display:none;">
+  <div class="setup-wrap">
+    <div class="setup-box">
+      <div style="font-size:48px;margin-bottom:16px;">👋</div>
+      <h2>Bienvenue !</h2>
+      <p>Première ouverture de l'app.<br>Comment tu t'appelles ?</p>
+      <input type="text" id="setup-name" placeholder="Ton prénom" autocomplete="off" maxlength="20" />
+      <button onclick="saveName()">Commencer</button>
+    </div>
+  </div>
+</div>
+
+<div id="app" style="display:none;flex-direction:column;flex:1;min-height:100dvh;">
+  <div class="header">
+    <div class="header-top">
+      <h1>Budget semaine <span class="sync-dot loading" id="sync-dot"></span></h1>
+      <span style="font-size:12px;opacity:.75;" id="user-name-label"></span>
+    </div>
+    <div id="header-extra"></div>
+  </div>
+
+  <div class="stats-strip">
+    <div class="stat-item"><div class="stat-label">Dépensé</div><div class="stat-val red" id="stat-spent">0</div></div>
+    <div class="stat-item"><div class="stat-label">Restant</div><div class="stat-val grn" id="stat-remain">30 000</div></div>
+    <div class="stat-item"><div class="stat-label">Moy./jour</div><div class="stat-val" id="stat-avg">0</div></div>
+  </div>
+
+  <div class="content">
+    <div class="screen active" id="screen-home">
+      <div class="alert" id="alert-box"></div>
+      <div class="form-card">
+        <div class="form-title">Nouvelle dépense</div>
+        <div class="who-row">
+          <button class="who-btn active" onclick="pickWho('moi',this)" id="who-moi">👤 Moi</button>
+          <button class="who-btn" onclick="pickWho('elle',this)" id="who-elle">👤 <span id="partner-label">Ma femme</span></button>
+        </div>
+        <div class="cat-grid" id="cat-grid"></div>
+        <div class="inputs-row">
+          <div class="input-wrap" style="flex:2">
+            <label>Description</label>
+            <input type="text" id="f-desc" placeholder="ex. Carrefour" autocomplete="off" />
+          </div>
+          <div class="input-wrap" style="flex:1.2">
+            <label>Montant FCFP</label>
+            <input type="number" id="f-amount" class="input-amount" placeholder="0" inputmode="numeric" min="0" />
+          </div>
+        </div>
+        <button class="btn-add" onclick="addTx()">+ Enregistrer</button>
+      </div>
+      <div class="tx-section">
+        <div class="tx-section-head">
+          <span>Cette semaine</span>
+          <button onclick="clearWeek()">Tout effacer</button>
+        </div>
+        <div class="tx-card" id="tx-list"></div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-hist">
+      <div class="tx-section" style="margin-top:16px;">
+        <div class="tx-section-head"><span>Semaines passées</span></div>
+        <div class="hist-card" id="hist-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab active" id="tab-home" onclick="switchTab('home')">
+      <span class="tab-icon">📊</span><span class="tab-label">Semaine</span>
+    </button>
+    <button class="tab" id="tab-hist" onclick="switchTab('hist')">
+      <span class="tab-icon">📅</span><span class="tab-label">Historique</span>
+    </button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+const BUDGET = 30000;
+const CATS = [
+  {name:'Courses',    icon:'🛒', bg:'#e8f0fb'},
+  {name:'Voiture',   icon:'🚗', bg:'#fef3e2'},
+  {name:'Restaurant',icon:'🍽️', bg:'#f0eeff'},
+  {name:'Loisirs',   icon:'🎉', bg:'#e8f7ee'},
+  {name:'Santé',     icon:'💊', bg:'#fdecea'},
+  {name:'Vêtements', icon:'👗', bg:'#fce8f0'},
+  {name:'Maison',    icon:'🏠', bg:'#edf7e8'},
+  {name:'Autres',    icon:'🎁', bg:'#f2f4f8'},
+];
+const DAYS = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+
+firebase.initializeApp({
+  apiKey: "AIzaSyCuDE-XpbpTQX7lVBWrwe3Ljr5GLeeCwBg",
+  authDomain: "budget-semaine-5e6a0.firebaseapp.com",
+  databaseURL: "https://budget-semaine-5e6a0-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "budget-semaine-5e6a0",
+  storageBucket: "budget-semaine-5e6a0.firebasestorage.app",
+  messagingSenderId: "450955927135",
+  appId: "1:450955927135:web:83e1e215a1a7d0522c45ea"
+});
+const db = firebase.database();
+
+let selCat = CATS[0].name;
+let selWho = 'moi';
+let txs = {};
+let myName = localStorage.getItem('myName') || '';
+let partnerName = localStorage.getItem('partnerName') || 'Ma femme';
+
+function init() {
+  if (!myName) { document.getElementById('setup-screen').style.display = 'block'; }
+  else { startApp(); }
+}
+
+function saveName() {
+  const val = document.getElementById('setup-name').value.trim();
+  if (!val) return;
+  myName = val;
+  localStorage.setItem('myName', myName);
+  document.getElementById('setup-screen').style.display = 'none';
+  startApp();
+}
+
+function startApp() {
+  const app = document.getElementById('app');
+  app.style.display = 'flex';
+  document.getElementById('user-name-label').textContent = myName;
+  document.getElementById('partner-label').textContent = partnerName;
+  buildCatGrid();
+  subscribeFirebase();
+  purgeOld();
+}
+
+function getWeekKey() {
+  const d = new Date();
+  const day = d.getDay() === 0 ? 7 : d.getDay();
+  const mon = new Date(d); mon.setDate(d.getDate() - (day - 1));
+  return mon.toISOString().split('T')[0];
+}
+
+function getWeekRange(key) {
+  const mon = new Date(key + 'T12:00:00');
+  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  const o = {day:'numeric',month:'short'};
+  return mon.toLocaleDateString('fr-FR',o) + ' – ' + sun.toLocaleDateString('fr-FR',o);
+}
+
+function setSyncDot(state) {
+  const d = document.getElementById('sync-dot');
+  d.className = 'sync-dot' + (state==='ok'?'':state==='off'?' off':' loading');
+}
+
+function subscribeFirebase() {
+  setSyncDot('loading');
+  db.ref('weeks/' + getWeekKey()).on('value', snap => {
+    txs = snap.val() || {};
+    setSyncDot('ok');
+    render();
+  }, () => setSyncDot('off'));
+}
+
+function isoToday() { return new Date().toISOString().split('T')[0]; }
+
+function addTx() {
+  const amount = parseFloat(document.getElementById('f-amount').value);
+  if (!amount || amount <= 0) { document.getElementById('f-amount').focus(); return; }
+  const desc = document.getElementById('f-desc').value.trim();
+  const id = Date.now().toString();
+  const who = selWho === 'moi' ? myName : partnerName;
+  setSyncDot('loading');
+  db.ref('weeks/' + getWeekKey() + '/' + id).set({id, desc, amount, cat:selCat, who, date:isoToday()})
+    .then(() => { document.getElementById('f-amount').value=''; document.getElementById('f-desc').value=''; setSyncDot('ok'); })
+    .catch(() => setSyncDot('off'));
+}
+
+function delTx(id) {
+  setSyncDot('loading');
+  db.ref('weeks/' + getWeekKey() + '/' + id).remove()
+    .then(()=>setSyncDot('ok')).catch(()=>setSyncDot('off'));
+}
+
+function clearWeek() {
+  if (!Object.keys(txs).length) return;
+  if (!confirm('Effacer toutes les dépenses de cette semaine ?')) return;
+  setSyncDot('loading');
+  db.ref('weeks/' + getWeekKey()).remove()
+    .then(()=>setSyncDot('ok')).catch(()=>setSyncDot('off'));
+}
+
+function purgeOld() {
+  const cutoff = new Date(); cutoff.setMonth(cutoff.getMonth()-6);
+  const cut = cutoff.toISOString().split('T')[0];
+  db.ref('weeks').once('value', snap => {
+    const all = snap.val()||{};
+    Object.keys(all).forEach(k=>{ if(k<cut) db.ref('weeks/'+k).remove(); });
+  });
+}
+
+function fmt(n) { return Math.round(n).toLocaleString('fr-FR')+' FCFP'; }
+function fmtS(n) { return Math.round(n).toLocaleString('fr-FR'); }
+
+function buildCatGrid() {
+  document.getElementById('cat-grid').innerHTML = CATS.map(c=>`
+    <button class="cat-btn${c.name===selCat?' active':''}" onclick="pickCat('${c.name}',this)">
+      <span class="ce">${c.icon}</span><span>${c.name}</span>
+    </button>`).join('');
+}
+
+function pickCat(name, el) {
+  selCat = name;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function pickWho(who, el) {
+  selWho = who;
+  document.querySelectorAll('.who-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function render() {
+  const list = Object.values(txs);
+  const total = list.reduce((s,t)=>s+Number(t.amount),0);
+  const remain = BUDGET - total;
+  const pct = Math.min(Math.round(total/BUDGET*100),100);
+  const dayIdx = new Date().getDay()===0?7:new Date().getDay();
+
+  document.getElementById('stat-spent').textContent = fmtS(total);
+  document.getElementById('stat-remain').textContent = fmtS(Math.max(remain,0));
+  document.getElementById('stat-remain').className = 'stat-val '+(remain<0?'red':'grn');
+  document.getElementById('stat-avg').textContent = fmtS(Math.round(total/dayIdx));
+
+  document.getElementById('header-extra').innerHTML = `
+    <div style="padding-bottom:20px;">
+      <div style="font-size:12px;opacity:.75;margin-bottom:2px;">${getWeekRange(getWeekKey())}</div>
+      <div style="font-size:12px;opacity:.75;margin-bottom:4px;">Il reste</div>
+      <div style="font-size:40px;font-weight:600;letter-spacing:-1px;color:${remain<0?'#FAC775':'white'};line-height:1;margin-bottom:6px;">${remain>=0?fmt(remain):'- '+fmt(Math.abs(remain))}</div>
+      <div style="font-size:12px;opacity:.75;margin-bottom:16px;">sur ${fmt(BUDGET)} · ${fmt(total)} dépensé</div>
+      <div style="background:rgba(255,255,255,0.2);border-radius:6px;height:8px;overflow:hidden;margin-bottom:6px;">
+        <div style="height:100%;width:${pct}%;border-radius:6px;background:${pct>=100?'#F09595':pct>=80?'#FAC775':'white'};transition:width .5s;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;opacity:.75;">
+        <span>${pct}% utilisé</span><span>${fmt(BUDGET)}</span>
+      </div>
+    </div>`;
+
+  const ab = document.getElementById('alert-box');
+  if (remain<0){ab.className='alert show danger';ab.textContent='⚠️ Budget dépassé de '+fmt(Math.abs(remain))+' !';}
+  else if(pct>=80){ab.className='alert show warn';ab.textContent='⚠️ '+pct+'% utilisé — il reste '+fmt(remain)+'.';}
+  else{ab.className='alert';}
+
+  renderList(list);
+}
+
+function renderList(list) {
+  const el = document.getElementById('tx-list');
+  if (!list.length){el.innerHTML='<div class="empty-msg">Aucune dépense cette semaine 🎉</div>';return;}
+  const sorted=[...list].sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id));
+  const grouped={};
+  sorted.forEach(t=>{if(!grouped[t.date])grouped[t.date]=[];grouped[t.date].push(t);});
+  el.innerHTML=Object.entries(grouped).map(([date,items])=>{
+    const d=new Date(date+'T12:00:00');
+    const dayTotal=items.reduce((s,t)=>s+Number(t.amount),0);
+    const hdr=`<div class="day-label">${DAYS[d.getDay()]} ${d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} — ${fmt(dayTotal)}</div>`;
+    const rows=items.map(t=>{
+      const cat=CATS.find(c=>c.name===t.cat)||CATS[7];
+      const isMe=t.who===myName;
+      return `<div class="tx-item">
+        <div class="tx-ico" style="background:${cat.bg}">${cat.icon}</div>
+        <div class="tx-info">
+          <div class="tx-name">${t.desc||t.cat}</div>
+          <div class="tx-meta">${t.cat} <span class="who-badge ${isMe?'moi':'elle'}">${t.who}</span></div>
+        </div>
+        <div class="tx-right">
+          <div class="tx-amt">-${fmt(Number(t.amount))}</div>
+          <button class="tx-del" onclick="delTx('${t.id}')">×</button>
+        </div>
+      </div>`;
+    }).join('');
+    return hdr+rows;
+  }).join('');
+}
+
+function renderHistory() {
+  db.ref('weeks').once('value', snap=>{
+    const all=snap.val()||{};
+    const cur=getWeekKey();
+    const past=Object.entries(all)
+      .filter(([k])=>k!==cur)
+      .map(([k,v])=>{const l=Object.values(v);return{weekKey:k,spent:l.reduce((s,t)=>s+Number(t.amount),0),count:l.length};})
+      .sort((a,b)=>b.weekKey.localeCompare(a.weekKey));
+    const el=document.getElementById('hist-list');
+    if(!past.length){el.innerHTML='<div class="empty-msg">Aucun historique pour l\'instant.</div>';return;}
+    el.innerHTML=past.map(h=>{
+      const pct=Math.round(h.spent/BUDGET*100);
+      return `<div class="hist-item">
+        <div><div class="hist-week">${getWeekRange(h.weekKey)}</div><div class="hist-dates">${h.count} dépense${h.count>1?'s':''}</div></div>
+        <div style="text-align:right"><div class="hist-amt ${h.spent>BUDGET?'over':'ok'}" style="font-size:15px;font-weight:600;">${fmt(h.spent)}</div><div class="hist-pct">${pct}% du budget</div></div>
+      </div>`;
+    }).join('');
+  });
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='hist') renderHistory();
+}
+
+document.getElementById('f-amount').addEventListener('keydown',e=>{if(e.key==='Enter')addTx();});
+document.getElementById('f-desc').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('f-amount').focus();});
+document.getElementById('setup-name').addEventListener('keydown',e=>{if(e.key==='Enter')saveName();});
+
+init();
+</script>
+</body>
+</html>
