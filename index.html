@@ -140,6 +140,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <input type="number" id="f-amount" class="input-amount" placeholder="0" inputmode="numeric" min="0" />
           </div>
         </div>
+        <div class="inputs-row">
+          <div class="input-wrap" style="flex:1">
+            <label>Date</label>
+            <input type="date" id="f-date" />
+          </div>
+        </div>
         <button class="btn-add" onclick="addTx()">+ Enregistrer</button>
       </div>
       <div class="tx-section">
@@ -262,9 +268,10 @@ function addTx() {
   const desc = document.getElementById('f-desc').value.trim();
   const id = Date.now().toString();
   const who = selWho === 'moi' ? myName : partnerName;
+  const dateVal = document.getElementById('f-date').value || isoToday();
   setSyncDot('loading');
-  db.ref('weeks/' + getWeekKey() + '/' + id).set({id, desc, amount, cat:selCat, who, date:isoToday()})
-    .then(() => { document.getElementById('f-amount').value=''; document.getElementById('f-desc').value=''; setSyncDot('ok'); })
+  db.ref('weeks/' + getWeekKey() + '/' + id).set({id, desc, amount, cat:selCat, who, date:dateVal})
+    .then(() => { document.getElementById('f-amount').value=''; document.getElementById('f-desc').value=''; document.getElementById('f-date').value=isoToday(); setSyncDot('ok'); })
     .catch(() => setSyncDot('off'));
 }
 
@@ -408,6 +415,7 @@ document.getElementById('f-amount').addEventListener('keydown',e=>{if(e.key==='E
 document.getElementById('f-desc').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('f-amount').focus();});
 document.getElementById('setup-name').addEventListener('keydown',e=>{if(e.key==='Enter')saveName();});
 
+document.getElementById('f-date').value = isoToday();
 init();
 </script>
 </body>
