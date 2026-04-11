@@ -9,13 +9,13 @@
 <title>Budget semaine</title>
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-title" content="Budget">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="icon.png">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
-:root{--blue:#1a56a0;--blue-light:#e8f0fb;--red:#c0392b;--red-light:#fdecea;--orange:#d4720a;--orange-light:#fef3e2;--green:#1e7e4a;--bg:#f2f4f8;--card:#ffffff;--text:#1a1a2e;--muted:#7a7f9a;--border:rgba(0,0,0,0.08);--radius:18px;--radius-sm:12px;}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+:root{--blue:#1a56a0;--blue-light:#e8f0fb;--red:#c0392b;--red-light:#fdecea;--orange:#d4720a;--orange-light:#fef3e2;--green:#1e7e4a;--bg:#f2f4f8;--card:#fff;--text:#1a1a2e;--muted:#7a7f9a;--border:rgba(0,0,0,0.08);--radius:18px;--radius-sm:12px;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;display:flex;flex-direction:column;max-width:430px;margin:0 auto;overflow-x:hidden;}
+/* HEADER */
 .header{background:var(--blue);padding:env(safe-area-inset-top,12px) 20px 0;color:white;}
 .header-top{display:flex;justify-content:space-between;align-items:center;padding:14px 0 16px;}
 .header-top h1{font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px;}
@@ -23,18 +23,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .sync-dot.off{background:#f44336;}
 .sync-dot.loading{background:#FAC775;animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+/* STATS STRIP */
 .stats-strip{background:var(--card);display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--border);}
-.stat-item{padding:14px 16px;border-right:1px solid var(--border);}
-.stat-item:last-child{border-right:none;}
-.stat-label{font-size:11px;color:var(--muted);margin-bottom:3px;}
-.stat-val{font-size:14px;font-weight:600;}
-.stat-val.red{color:var(--red);}
-.stat-val.grn{color:var(--green);}
+.ssi{padding:12px 10px;border-right:1px solid var(--border);}
+.ssi:last-child{border-right:none;}
+.ssi-l{font-size:10px;color:var(--muted);margin-bottom:3px;}
+.ssi-v{font-size:14px;font-weight:700;}
+.ssi-v.red{color:var(--red);}
+.ssi-v.grn{color:var(--green);}
+.ssi-v.ora{color:var(--orange);}
+/* ALERTS */
 .alert{margin:12px 16px 0;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;font-weight:500;display:none;}
 .alert.show{display:block;}
 .alert.warn{background:var(--orange-light);color:var(--orange);}
 .alert.danger{background:var(--red-light);color:var(--red);}
+/* CONTENT */
 .content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(80px + env(safe-area-inset-bottom,0px));}
+.content::-webkit-scrollbar{display:none;}
+/* FORM */
 .form-card{background:var(--card);margin:12px 16px 0;border-radius:var(--radius);padding:16px;border:1px solid var(--border);}
 .form-title{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;}
 .who-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
@@ -49,9 +55,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .input-wrap label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px;font-weight:500;}
 .input-wrap input{width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-family:inherit;font-size:15px;color:var(--text);outline:none;-webkit-appearance:none;}
 .input-wrap input:focus{border-color:var(--blue);background:white;}
-.input-amount{font-size:18px !important;font-weight:600;}
+.input-amount{font-size:18px!important;font-weight:600;}
 .btn-add{width:100%;padding:13px;border-radius:var(--radius-sm);border:none;background:var(--blue);color:white;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s,transform .1s;}
 .btn-add:active{opacity:.85;transform:scale(.98);}
+/* TX LIST */
 .tx-section{margin:16px 16px 0;}
 .tx-section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
 .tx-section-head span{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
@@ -71,6 +78,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .tx-amt{font-size:15px;font-weight:600;color:var(--red);white-space:nowrap;}
 .tx-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:0;}
 .empty-msg{text-align:center;padding:28px;color:var(--muted);font-size:14px;}
+/* HISTORY */
 .hist-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
 .hist-item{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border);}
 .hist-item:last-child{border-bottom:none;}
@@ -79,13 +87,128 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .hist-amt.over{color:var(--red);}
 .hist-amt.ok{color:var(--green);}
 .hist-pct{font-size:11px;color:var(--muted);text-align:right;margin-top:2px;}
+/* ── STATS SCREEN ── */
+.stat-period-switch{display:flex;background:rgba(255,255,255,.15);border-radius:12px;padding:3px;margin-bottom:14px;}
+.sps{flex:1;padding:8px;border-radius:10px;font-size:14px;font-weight:500;text-align:center;color:rgba(255,255,255,.65);cursor:pointer;transition:all .2s;}
+.sps.active{background:white;color:var(--blue);font-weight:700;}
+.stat-big{font-size:34px;font-weight:700;letter-spacing:-1px;color:white;line-height:1;}
+.stat-big-sub{font-size:13px;opacity:.7;margin:4px 0 14px;}
+.stat-prog-track{height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;margin-bottom:4px;}
+.stat-prog-fill{height:100%;border-radius:3px;transition:width .4s;}
+.stat-prog-labels{display:flex;justify-content:space-between;font-size:11px;opacity:.65;margin-bottom:16px;}
+/* STAT CARDS */
+.scard{background:var(--card);border-radius:16px;padding:14px;margin:12px 16px 0;border:1px solid var(--border);}
+.scard-title{font-size:13px;font-weight:700;color:#374151;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;}
+.scard-hint{font-size:10px;font-weight:400;color:var(--muted);}
+/* BARS */
+.bars-wrap{display:flex;align-items:flex-end;gap:6px;height:100px;margin-bottom:8px;}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;cursor:pointer;}
+.bar-val{font-size:9px;font-weight:600;color:#6b7280;}
+.bar{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:all .2s;}
+.bar-lbl{font-size:11px;color:var(--muted);font-weight:500;}
+.bar-col.sel .bar{outline:3px solid var(--blue);outline-offset:2px;}
+.bar-col.sel .bar-lbl{color:var(--blue);font-weight:700;}
+.divider-line{border-top:1.5px dashed #e5e7eb;padding-top:6px;display:flex;justify-content:space-between;}
+.divider-line span{font-size:10px;color:var(--muted);}
+/* DETAIL PANEL */
+.detail-panel{border-radius:14px;padding:14px;margin:0 16px;animation:fadeIn .2s ease;}
+.detail-panel.week{background:#eff6ff;border:1.5px solid #bfdbfe;margin-top:10px;}
+.detail-panel.month{background:#faf5ff;border:1.5px solid #e9d5ff;margin-top:10px;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.dp-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.dp-title{font-size:15px;font-weight:700;}
+.dp-title.week{color:#1e40af;}
+.dp-title.month{color:#6b21a8;}
+.dp-dates{font-size:11px;margin-top:2px;}
+.dp-dates.week{color:#3b82f6;}
+.dp-dates.month{color:#9333ea;}
+.dp-badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
+.dp-badge.ok{background:#dcfce7;color:#15803d;}
+.dp-badge.over{background:#fee2e2;color:#dc2626;}
+.dp-badge.cur{background:#dbeafe;color:#1d4ed8;}
+.dp-badge.mcur{background:#f3e8ff;color:#7e22ce;}
+/* MINI DONUT */
+.dp-chart{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.mini-donut{position:relative;flex-shrink:0;}
+.mini-donut svg{transform:rotate(-90deg);}
+.mini-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.mc-v{font-size:11px;font-weight:700;}
+.mc-v.week{color:#1e40af;}
+.mc-v.month{color:#6b21a8;}
+.mc-l{font-size:8px;color:var(--muted);}
+.mini-legend{flex:1;display:flex;flex-direction:column;gap:5px;}
+.ml-item{display:flex;align-items:center;gap:6px;}
+.ml-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.ml-name{font-size:11px;color:#374151;flex:1;}
+.ml-val{font-size:11px;font-weight:700;color:var(--text);}
+/* MINI BARS for month */
+.dp-mini-bars{display:flex;align-items:flex-end;gap:5px;height:44px;margin-bottom:8px;}
+.dmb-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;}
+.dmb-bar{width:100%;border-radius:3px 3px 0 0;}
+.dmb-lbl{font-size:9px;color:var(--muted);}
+.dmb-val{font-size:8px;font-weight:600;color:#6b7280;}
+/* COLLAPSIBLE TX */
+.dep-section{border-top:1px solid #dbeafe;padding-top:10px;}
+.dep-section.month-dep{border-color:#e9d5ff;}
+.dep-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:2px 0;}
+.dep-left{display:flex;align-items:center;gap:6px;}
+.dep-title{font-size:12px;font-weight:700;}
+.dep-title.week{color:#1e40af;}
+.dep-title.month{color:#6b21a8;}
+.dep-count{font-size:11px;padding:2px 8px;border-radius:10px;}
+.dep-count.week{background:#dbeafe;color:#1d4ed8;}
+.dep-count.month{background:#f3e8ff;color:#7e22ce;}
+.dep-arrow{font-size:13px;transition:transform .25s;line-height:1;}
+.dep-arrow.week{color:#3b82f6;}
+.dep-arrow.month{color:#9333ea;}
+.dep-arrow.open{transform:rotate(180deg);}
+.dep-list{overflow:hidden;max-height:0;transition:max-height .35s ease;}
+.dep-list.open{max-height:1000px;}
+.dep-list-inner{padding-top:8px;}
+.day-lbl-small{font-size:10px;font-weight:700;color:#93c5fd;text-transform:uppercase;letter-spacing:.3px;padding:5px 0 3px;}
+.day-lbl-small.month{color:#c084fc;}
+.dp-tx-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #dbeafe;}
+.dp-tx-item:last-child{border-bottom:none;}
+.dp-tx-item.month-tx{border-color:#e9d5ff;}
+.dp-tx-ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.dp-tx-info{flex:1;min-width:0;}
+.dp-tx-name{font-size:12px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dp-tx-sub{font-size:10px;color:#6b7280;margin-top:1px;}
+.dp-tx-amt{font-size:13px;font-weight:700;color:var(--red);white-space:nowrap;}
+.dep-total-row{display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1.5px solid #bfdbfe;margin-top:4px;}
+.dep-total-row.month{border-color:#e9d5ff;}
+.dt-label{font-size:12px;color:#6b7280;}
+.dt-val{font-size:14px;font-weight:700;color:var(--red);}
+/* DONUT MAIN */
+.donut-wrap{display:flex;align-items:center;gap:16px;}
+.donut{position:relative;width:110px;height:110px;flex-shrink:0;}
+.donut svg{transform:rotate(-90deg);}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.dc-v{font-size:13px;font-weight:700;color:var(--text);}
+.dc-l{font-size:10px;color:var(--muted);}
+.legend{display:flex;flex-direction:column;gap:8px;flex:1;}
+.leg{display:flex;align-items:center;gap:8px;}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.leg-name{font-size:12px;color:#374151;flex:1;}
+.leg-right{text-align:right;}
+.leg-val{font-size:12px;font-weight:700;color:var(--text);display:block;}
+.leg-pct{font-size:10px;color:var(--muted);}
+/* EXPORT */
+.export-btn{display:flex;align-items:center;gap:12px;background:#16a34a;border-radius:14px;padding:14px 16px;color:white;cursor:pointer;}
+.eb-ico{width:42px;height:42px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.eb-info{flex:1;}
+.eb-title{font-size:14px;font-weight:700;}
+.eb-sub{font-size:11px;opacity:.8;margin-top:1px;}
+.eb-arrow{font-size:18px;opacity:.8;}
+/* TABS */
 .tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--card);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:100;}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 12px;cursor:pointer;gap:3px;border:none;background:none;font-family:inherit;}
 .tab-icon{font-size:22px;}
 .tab-label{font-size:10px;color:var(--muted);font-weight:500;}
-.tab.active .tab-label{color:var(--blue);}
+.tab.active .tab-label{color:var(--blue);font-weight:700;}
 .screen{display:none;}
 .screen.active{display:block;}
+/* SETUP */
 .setup-wrap{display:flex;flex:1;align-items:center;justify-content:center;min-height:100dvh;background:var(--bg);}
 .setup-box{padding:32px 24px;text-align:center;max-width:360px;width:100%;}
 .setup-box h2{font-size:22px;font-weight:600;margin-bottom:8px;}
@@ -103,84 +226,80 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div style="font-size:48px;margin-bottom:16px;">👋</div>
       <h2>Bienvenue !</h2>
       <p>Première ouverture de l'app.<br>Comment tu t'appelles ?</p>
-      <input type="text" id="setup-name" placeholder="Ton prénom" autocomplete="off" maxlength="20" />
+      <input type="text" id="setup-name" placeholder="Ton prénom" autocomplete="off" maxlength="20"/>
       <button onclick="saveName()">Commencer</button>
     </div>
   </div>
 </div>
 
 <div id="app" style="display:none;flex-direction:column;flex:1;min-height:100dvh;">
+
   <div class="header">
     <div class="header-top">
-      <h1>Budget semaine <span class="sync-dot loading" id="sync-dot"></span></h1>
-      <span style="font-size:12px;opacity:.75;cursor:pointer;text-decoration:underline dotted;" id="user-name-label" onclick="editName()" title="Modifier mon prénom"></span>
+      <h1 id="header-title">Budget semaine <span class="sync-dot loading" id="sync-dot"></span></h1>
+      <span style="font-size:12px;opacity:.75;cursor:pointer;text-decoration:underline dotted;" id="user-name-label" onclick="editName()"></span>
     </div>
     <div id="header-extra"></div>
   </div>
 
-  <div class="stats-strip">
-    <div class="stat-item"><div class="stat-label">Dépensé</div><div class="stat-val red" id="stat-spent">0</div></div>
-    <div class="stat-item"><div class="stat-label">Restant</div><div class="stat-val grn" id="stat-remain">30 000</div></div>
-    <div class="stat-item"><div class="stat-label">Moy./jour</div><div class="stat-val" id="stat-avg">0</div></div>
+  <div class="stats-strip" id="stats-strip">
+    <div class="ssi"><div class="ssi-l" id="sl1">Dépensé</div><div class="ssi-v red" id="sv1">0</div></div>
+    <div class="ssi"><div class="ssi-l" id="sl2">Restant</div><div class="ssi-v grn" id="sv2">30 000</div></div>
+    <div class="ssi"><div class="ssi-l" id="sl3">Moy./jour</div><div class="ssi-v" id="sv3">0</div></div>
   </div>
 
   <div class="content">
+
+    <!-- ── BUDGET SCREEN ── -->
     <div class="screen active" id="screen-home">
       <div class="alert" id="alert-box"></div>
       <div class="form-card">
         <div class="form-title">Nouvelle dépense</div>
         <div class="who-row">
-          <button class="who-btn active" onclick="pickWho('moi',this)" id="who-moi">👤 Moi</button>
-          <button class="who-btn" onclick="pickWho('elle',this)" id="who-elle">👤 <span id="partner-label">Ma femme</span></button>
+          <button class="who-btn active" onclick="pickWho('moi',this)">👤 Moi</button>
+          <button class="who-btn" onclick="pickWho('elle',this)">👤 <span id="partner-label">Ma femme</span></button>
         </div>
         <div class="cat-grid" id="cat-grid"></div>
         <div class="inputs-row">
-          <div class="input-wrap" style="flex:2">
-            <label>Description</label>
-            <input type="text" id="f-desc" placeholder="ex. Carrefour" autocomplete="off" />
-          </div>
-          <div class="input-wrap" style="flex:1.2">
-            <label>Montant FCFP</label>
-            <input type="number" id="f-amount" class="input-amount" placeholder="0" inputmode="numeric" min="0" />
-          </div>
+          <div class="input-wrap" style="flex:2"><label>Description</label><input type="text" id="f-desc" placeholder="ex. Carrefour" autocomplete="off"/></div>
+          <div class="input-wrap" style="flex:1.2"><label>Montant FCFP</label><input type="number" id="f-amount" class="input-amount" placeholder="0" inputmode="numeric" min="0"/></div>
         </div>
         <div class="inputs-row">
-          <div class="input-wrap" style="flex:1">
-            <label>Date</label>
-            <input type="date" id="f-date" />
-          </div>
+          <div class="input-wrap"><label>Date</label><input type="date" id="f-date"/></div>
         </div>
         <button class="btn-add" onclick="addTx()">+ Enregistrer</button>
       </div>
       <div class="tx-section">
-        <div class="tx-section-head">
-          <span>Cette semaine</span>
-          <button onclick="clearWeek()">Tout effacer</button>
-        </div>
+        <div class="tx-section-head"><span>Cette semaine</span><button onclick="clearWeek()">Tout effacer</button></div>
         <div class="tx-card" id="tx-list"></div>
       </div>
     </div>
 
+    <!-- ── STATS SCREEN ── -->
+    <div class="screen" id="screen-stats">
+      <div id="stats-content"></div>
+    </div>
+
+    <!-- ── HISTORY SCREEN ── -->
     <div class="screen" id="screen-hist">
       <div class="tx-section" style="margin-top:16px;">
         <div class="tx-section-head"><span>Semaines passées</span></div>
         <div class="hist-card" id="hist-list"></div>
       </div>
     </div>
+
   </div>
 
   <div class="tab-bar">
-    <button class="tab active" id="tab-home" onclick="switchTab('home')">
-      <span class="tab-icon">📊</span><span class="tab-label">Semaine</span>
-    </button>
-    <button class="tab" id="tab-hist" onclick="switchTab('hist')">
-      <span class="tab-icon">📅</span><span class="tab-label">Historique</span>
-    </button>
+    <button class="tab active" id="tab-home" onclick="switchTab('home')"><span class="tab-icon">📊</span><span class="tab-label">Budget</span></button>
+    <button class="tab" id="tab-stats" onclick="switchTab('stats')"><span class="tab-icon">📈</span><span class="tab-label">Stats</span></button>
+    <button class="tab" id="tab-hist" onclick="switchTab('hist')"><span class="tab-icon">📅</span><span class="tab-label">Historique</span></button>
   </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 const BUDGET_BASE = 30000;
 let BUDGET = 30000;
@@ -192,205 +311,147 @@ const CATS = [
   {name:'Santé',     icon:'💊', bg:'#fdecea'},
   {name:'Vêtements', icon:'👗', bg:'#fce8f0'},
   {name:'Maison',    icon:'🏠', bg:'#edf7e8'},
-  {name:'Retrait',    icon:'💵', bg:'#f2f4f8'},
+  {name:'Retrait',   icon:'💵', bg:'#f2f4f8'},
 ];
+const CAT_COLORS = ['#1a56a0','#FAC775','#a78bfa','#34d399','#f87171','#f9a8d4','#6ee7b7','#94a3b8'];
 const DAYS = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const MONTHS_SHORT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
 
 firebase.initializeApp({
-  apiKey: "AIzaSyCuDE-XpbpTQX7lVBWrwe3Ljr5GLeeCwBg",
-  authDomain: "budget-semaine-5e6a0.firebaseapp.com",
-  databaseURL: "https://budget-semaine-5e6a0-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "budget-semaine-5e6a0",
-  storageBucket: "budget-semaine-5e6a0.firebasestorage.app",
-  messagingSenderId: "450955927135",
-  appId: "1:450955927135:web:83e1e215a1a7d0522c45ea"
+  apiKey:"AIzaSyCuDE-XpbpTQX7lVBWrwe3Ljr5GLeeCwBg",
+  authDomain:"budget-semaine-5e6a0.firebaseapp.com",
+  databaseURL:"https://budget-semaine-5e6a0-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"budget-semaine-5e6a0",
+  storageBucket:"budget-semaine-5e6a0.firebasestorage.app",
+  messagingSenderId:"450955927135",
+  appId:"1:450955927135:web:83e1e215a1a7d0522c45ea"
 });
 const db = firebase.database();
 
 let selCat = CATS[0].name;
 let selWho = 'moi';
 let txs = {};
+let allWeeks = {};
 let myName = localStorage.getItem('myName') || '';
 let partnerName = localStorage.getItem('partnerName') || 'Ma femme';
+let statsPeriod = 'sem';
+let selWeekBar = null;
+let selMonthBar = null;
+let openDepWeek = false;
+let openDepMonth = false;
 
-function init() {
-  if (!myName) { document.getElementById('setup-screen').style.display = 'block'; }
-  else { startApp(); }
-}
+// ─── UTILS ───────────────────────────────────────────────────
+function fmt(n){return Math.round(n).toLocaleString('fr-FR')+' FCFP';}
+function fmtS(n){return Math.round(n).toLocaleString('fr-FR');}
+function localDateStr(d){const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day;}
+function isoToday(){const now=new Date();return localDateStr(new Date(now.getFullYear(),now.getMonth(),now.getDate()));}
+function getWeekKey(){const now=new Date();const dow=now.getDay()===0?7:now.getDay();const mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-(dow-1));return localDateStr(mon);}
+function getWeekRange(key){const mon=new Date(key+'T12:00:00');const sun=new Date(mon);sun.setDate(mon.getDate()+6);const o={day:'numeric',month:'short'};return mon.toLocaleDateString('fr-FR',o)+' – '+sun.toLocaleDateString('fr-FR',o);}
+function getMonthKey(weekKey){return weekKey.slice(0,7);}
 
-function saveName() {
-  const val = document.getElementById('setup-name').value.trim();
-  if (!val) return;
-  myName = val;
-  localStorage.setItem('myName', myName);
-  document.getElementById('setup-screen').style.display = 'none';
-  startApp();
-}
-
-function startApp() {
-  const app = document.getElementById('app');
-  app.style.display = 'flex';
-  document.getElementById('user-name-label').textContent = myName;
-  document.getElementById('user-name-label').title = 'Appuie pour modifier ton prénom';
-  document.getElementById('partner-label').textContent = partnerName;
+// ─── SETUP ───────────────────────────────────────────────────
+function init(){if(!myName){document.getElementById('setup-screen').style.display='block';}else{startApp();}}
+function saveName(){const val=document.getElementById('setup-name').value.trim();if(!val)return;myName=val;localStorage.setItem('myName',myName);document.getElementById('setup-screen').style.display='none';startApp();}
+function startApp(){
+  document.getElementById('app').style.display='flex';
+  document.getElementById('user-name-label').textContent=myName;
+  document.getElementById('partner-label').textContent=partnerName;
   buildCatGrid();
   subscribeFirebase();
   purgeOld();
 }
+function editName(){const n=prompt('Modifier ton prénom :',myName);if(n&&n.trim()){myName=n.trim();localStorage.setItem('myName',myName);document.getElementById('user-name-label').textContent=myName+' ✏️';setTimeout(()=>document.getElementById('user-name-label').textContent=myName,2000);}}
 
-function localDateStr(d) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,'0');
-  const day = String(d.getDate()).padStart(2,'0');
-  return y+'-'+m+'-'+day;
-}
-function getWeekKey() {
-  const now = new Date();
-  // Use local day of week, not UTC
-  const dow = now.getDay() === 0 ? 7 : now.getDay();
-  // Clone using local date parts to avoid UTC shift
-  const mon = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (dow - 1));
-  return localDateStr(mon);
-}
+// ─── FIREBASE ────────────────────────────────────────────────
+function setSyncDot(s){const d=document.getElementById('sync-dot');d.className='sync-dot'+(s==='ok'?'':s==='off'?' off':' loading');}
 
-function getWeekRange(key) {
-  const mon = new Date(key + 'T12:00:00');
-  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-  const o = {day:'numeric',month:'short'};
-  return mon.toLocaleDateString('fr-FR',o) + ' – ' + sun.toLocaleDateString('fr-FR',o);
-}
-
-function setSyncDot(state) {
-  const d = document.getElementById('sync-dot');
-  d.className = 'sync-dot' + (state==='ok'?'':state==='off'?' off':' loading');
-}
-
-function computeAdjustedBudget(callback) {
-  const cur = getWeekKey();
-  db.ref('weeks').once('value', snap => {
-    const all = snap.val() || {};
-    let carry = 0;
-    Object.entries(all).forEach(([k, v]) => {
-      if (k >= cur) return;
-      const spent = Object.values(v).reduce((s, t) => s + Number(t.amount), 0);
-      carry += (BUDGET_BASE - spent);
+function computeAdjustedBudget(callback){
+  const cur=getWeekKey();
+  db.ref('weeks').once('value',snap=>{
+    const all=snap.val()||{};
+    let carry=0;
+    Object.entries(all).forEach(([k,v])=>{
+      if(k>=cur)return;
+      const spent=Object.values(v).reduce((s,t)=>s+Number(t.amount),0);
+      carry+=(BUDGET_BASE-spent);
     });
-    BUDGET = BUDGET_BASE + Math.round(carry);
+    BUDGET=BUDGET_BASE+Math.round(carry);
     callback();
   });
 }
 
-function subscribeFirebase() {
-  computeAdjustedBudget(() => {
+function subscribeFirebase(){
+  computeAdjustedBudget(()=>{
     setSyncDot('loading');
-    db.ref('weeks/' + getWeekKey()).on('value', snap => {
-    txs = snap.val() || {};
-    setSyncDot('ok');
-    render();
-    }, () => setSyncDot('off'));
+    db.ref('weeks').on('value',snap=>{
+      allWeeks=snap.val()||{};
+      txs=allWeeks[getWeekKey()]||{};
+      setSyncDot('ok');
+      render();
+    },()=>setSyncDot('off'));
   });
 }
 
-function isoToday() {
-  const now = new Date();
-  return localDateStr(new Date(now.getFullYear(), now.getMonth(), now.getDate()));
-}
-
-function addTx() {
-  const amount = parseFloat(document.getElementById('f-amount').value);
-  if (!amount || amount <= 0) { document.getElementById('f-amount').focus(); return; }
-  const desc = document.getElementById('f-desc').value.trim();
-  const id = Date.now().toString();
-  const who = selWho === 'moi' ? myName : partnerName;
-  const dateVal = document.getElementById('f-date').value || isoToday();
+function addTx(){
+  const amount=parseFloat(document.getElementById('f-amount').value);
+  if(!amount||amount<=0){document.getElementById('f-amount').focus();return;}
+  const desc=document.getElementById('f-desc').value.trim();
+  const id=Date.now().toString();
+  const who=selWho==='moi'?myName:partnerName;
+  const dateVal=document.getElementById('f-date').value||isoToday();
   setSyncDot('loading');
-  db.ref('weeks/' + getWeekKey() + '/' + id).set({id, desc, amount, cat:selCat, who, date:dateVal})
-    .then(() => { document.getElementById('f-amount').value=''; document.getElementById('f-desc').value=''; document.getElementById('f-date').value=isoToday(); setSyncDot('ok'); })
-    .catch(() => setSyncDot('off'));
+  db.ref('weeks/'+getWeekKey()+'/'+id).set({id,desc,amount,cat:selCat,who,date:dateVal})
+    .then(()=>{document.getElementById('f-amount').value='';document.getElementById('f-desc').value='';document.getElementById('f-date').value=isoToday();setSyncDot('ok');})
+    .catch(()=>setSyncDot('off'));
 }
 
-function delTx(id) {
-  setSyncDot('loading');
-  db.ref('weeks/' + getWeekKey() + '/' + id).remove()
-    .then(()=>setSyncDot('ok')).catch(()=>setSyncDot('off'));
-}
+function delTx(id){setSyncDot('loading');db.ref('weeks/'+getWeekKey()+'/'+id).remove().then(()=>setSyncDot('ok')).catch(()=>setSyncDot('off'));}
+function clearWeek(){if(!Object.keys(txs).length)return;if(!confirm('Effacer toutes les dépenses ?'))return;setSyncDot('loading');db.ref('weeks/'+getWeekKey()).remove().then(()=>setSyncDot('ok')).catch(()=>setSyncDot('off'));}
+function purgeOld(){const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-6);const cut=cutoff.toISOString().split('T')[0];db.ref('weeks').once('value',snap=>{const all=snap.val()||{};Object.keys(all).forEach(k=>{if(k<cut)db.ref('weeks/'+k).remove();});});}
 
-function clearWeek() {
-  if (!Object.keys(txs).length) return;
-  if (!confirm('Effacer toutes les dépenses de cette semaine ?')) return;
-  setSyncDot('loading');
-  db.ref('weeks/' + getWeekKey()).remove()
-    .then(()=>setSyncDot('ok')).catch(()=>setSyncDot('off'));
-}
+// ─── HOME RENDER ─────────────────────────────────────────────
+function buildCatGrid(){document.getElementById('cat-grid').innerHTML=CATS.map(c=>`<button class="cat-btn${c.name===selCat?' active':''}" onclick="pickCat('${c.name}',this)"><span class="ce">${c.icon}</span><span>${c.name}</span></button>`).join('');}
+function pickCat(name,el){selCat=name;document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function pickWho(who,el){selWho=who;document.querySelectorAll('.who-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
 
-function purgeOld() {
-  const cutoff = new Date(); cutoff.setMonth(cutoff.getMonth()-6);
-  const cut = cutoff.toISOString().split('T')[0];
-  db.ref('weeks').once('value', snap => {
-    const all = snap.val()||{};
-    Object.keys(all).forEach(k=>{ if(k<cut) db.ref('weeks/'+k).remove(); });
-  });
-}
+function render(){
+  const list=Object.values(txs);
+  const total=list.reduce((s,t)=>s+Number(t.amount),0);
+  const remain=BUDGET-total;
+  const pct=Math.min(Math.round(total/BUDGET*100),100);
+  const dayIdx=new Date().getDay()===0?7:new Date().getDay();
 
-function fmt(n) { return Math.round(n).toLocaleString('fr-FR')+' FCFP'; }
-function fmtS(n) { return Math.round(n).toLocaleString('fr-FR'); }
+  document.getElementById('sv1').textContent=fmtS(total);
+  document.getElementById('sv2').textContent=fmtS(Math.max(remain,0));
+  document.getElementById('sv2').className='ssi-v '+(remain<0?'red':'grn');
+  document.getElementById('sv3').textContent=fmtS(Math.round(total/dayIdx));
 
-function buildCatGrid() {
-  document.getElementById('cat-grid').innerHTML = CATS.map(c=>`
-    <button class="cat-btn${c.name===selCat?' active':''}" onclick="pickCat('${c.name}',this)">
-      <span class="ce">${c.icon}</span><span>${c.name}</span>
-    </button>`).join('');
-}
-
-function pickCat(name, el) {
-  selCat = name;
-  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-}
-
-function pickWho(who, el) {
-  selWho = who;
-  document.querySelectorAll('.who-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-}
-
-function render() {
-  const list = Object.values(txs);
-  const total = list.reduce((s,t)=>s+Number(t.amount),0);
-  const remain = BUDGET - total;
-  const pct = Math.min(Math.round(total/BUDGET*100),100);
-  const dayIdx = new Date().getDay()===0?7:new Date().getDay();
-
-  document.getElementById('stat-spent').textContent = fmtS(total);
-  document.getElementById('stat-remain').textContent = fmtS(Math.max(remain,0));
-  document.getElementById('stat-remain').className = 'stat-val '+(remain<0?'red':'grn');
-  document.getElementById('stat-avg').textContent = fmtS(Math.round(total/dayIdx));
-
-  document.getElementById('header-extra').innerHTML = `
+  document.getElementById('header-extra').innerHTML=`
     <div style="padding-bottom:20px;">
       <div style="font-size:12px;opacity:.75;margin-bottom:2px;">${getWeekRange(getWeekKey())}</div>
       <div style="font-size:12px;opacity:.75;margin-bottom:4px;">Il reste</div>
-      <div style="font-size:40px;font-weight:600;letter-spacing:-1px;color:${remain<0?'#FAC775':'white'};line-height:1;margin-bottom:6px;">${remain>=0?fmt(remain):'- '+fmt(Math.abs(remain))}</div>
-      <div style="font-size:12px;opacity:.75;margin-bottom:16px;">sur ${fmt(BUDGET)} · ${fmt(total)} dépensé${BUDGET !== BUDGET_BASE ? ' <span style=\"background:rgba(255,255,255,0.2);padding:1px 8px;border-radius:20px;\">' + (BUDGET > BUDGET_BASE ? '+' : '') + fmt(BUDGET - BUDGET_BASE).replace(' FCFP','') + ' report</span>' : ''}</div>
-      <div style="background:rgba(255,255,255,0.2);border-radius:6px;height:8px;overflow:hidden;margin-bottom:6px;">
+      <div style="font-size:38px;font-weight:700;letter-spacing:-1px;color:${remain<0?'#FAC775':'white'};line-height:1;margin-bottom:6px;">${remain>=0?fmt(remain):'- '+fmt(Math.abs(remain))}</div>
+      <div style="font-size:12px;opacity:.75;margin-bottom:14px;">sur ${fmt(BUDGET)} · ${fmt(total)} dépensé${BUDGET!==BUDGET_BASE?' <span style="background:rgba(255,255,255,.2);padding:1px 8px;border-radius:20px;">'+(BUDGET>BUDGET_BASE?'+':'')+fmtS(BUDGET-BUDGET_BASE)+' report</span>':''}</div>
+      <div style="background:rgba(255,255,255,.2);border-radius:6px;height:7px;overflow:hidden;margin-bottom:5px;">
         <div style="height:100%;width:${pct}%;border-radius:6px;background:${pct>=100?'#F09595':pct>=80?'#FAC775':'white'};transition:width .5s;"></div>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;opacity:.75;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;opacity:.7;">
         <span>${pct}% utilisé</span><span>${fmt(BUDGET)}</span>
       </div>
     </div>`;
 
-  const ab = document.getElementById('alert-box');
-  if (remain<0){ab.className='alert show danger';ab.textContent='⚠️ Budget dépassé de '+fmt(Math.abs(remain))+' !';}
+  const ab=document.getElementById('alert-box');
+  if(remain<0){ab.className='alert show danger';ab.textContent='⚠️ Budget dépassé de '+fmt(Math.abs(remain))+' !';}
   else if(pct>=80){ab.className='alert show warn';ab.textContent='⚠️ '+pct+'% utilisé — il reste '+fmt(remain)+'.';}
   else{ab.className='alert';}
 
   renderList(list);
 }
 
-function renderList(list) {
-  const el = document.getElementById('tx-list');
-  if (!list.length){el.innerHTML='<div class="empty-msg">Aucune dépense cette semaine 🎉</div>';return;}
+function renderList(list){
+  const el=document.getElementById('tx-list');
+  if(!list.length){el.innerHTML='<div class="empty-msg">Aucune dépense cette semaine 🎉</div>';return;}
   const sorted=[...list].sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id));
   const grouped={};
   sorted.forEach(t=>{if(!grouped[t.date])grouped[t.date]=[];grouped[t.date].push(t);});
@@ -403,66 +464,376 @@ function renderList(list) {
       const isMe=t.who===myName;
       return `<div class="tx-item">
         <div class="tx-ico" style="background:${cat.bg}">${cat.icon}</div>
-        <div class="tx-info">
-          <div class="tx-name">${t.desc||t.cat}</div>
-          <div class="tx-meta">${t.cat} <span class="who-badge ${isMe?'moi':'elle'}">${t.who}</span></div>
-        </div>
-        <div class="tx-right">
-          <div class="tx-amt">-${fmt(Number(t.amount))}</div>
-          <button class="tx-del" onclick="delTx('${t.id}')">×</button>
-        </div>
+        <div class="tx-info"><div class="tx-name">${t.desc||t.cat}</div><div class="tx-meta">${t.cat} <span class="who-badge ${isMe?'moi':'elle'}">${t.who}</span></div></div>
+        <div class="tx-right"><div class="tx-amt">-${fmt(Number(t.amount))}</div><button class="tx-del" onclick="delTx('${t.id}')">×</button></div>
       </div>`;
     }).join('');
     return hdr+rows;
   }).join('');
 }
 
-function renderHistory() {
-  db.ref('weeks').once('value', snap=>{
-    const all=snap.val()||{};
-    const cur=getWeekKey();
-    const past=Object.entries(all)
-      .filter(([k])=>k!==cur)
-      .map(([k,v])=>{const l=Object.values(v);return{weekKey:k,spent:l.reduce((s,t)=>s+Number(t.amount),0),count:l.length};})
-      .sort((a,b)=>b.weekKey.localeCompare(a.weekKey));
-    const el=document.getElementById('hist-list');
-    if(!past.length){el.innerHTML='<div class="empty-msg">Aucun historique pour l\'instant.</div>';return;}
-    el.innerHTML=past.map(h=>{
-      const pct=Math.round(h.spent/BUDGET_BASE*100);
-      const diff = BUDGET_BASE - h.spent;
-      const diffLabel = diff >= 0 ? '+'+fmt(diff) : '-'+fmt(Math.abs(diff));
-      const diffColor = diff >= 0 ? 'var(--green)' : 'var(--red)';
-      return `<div class="hist-item">
-        <div><div class="hist-week">${getWeekRange(h.weekKey)}</div><div class="hist-dates">${h.count} dépense${h.count>1?'s':''} · <span style="color:${diffColor};font-weight:600;">${diffLabel} reporté</span></div></div>
-        <div style="text-align:right"><div class="hist-amt ${h.spent>BUDGET_BASE?'over':'ok'}" style="font-size:15px;font-weight:600;">${fmt(h.spent)}</div><div class="hist-pct">${pct}% du budget</div></div>
-      </div>`;
-    }).join('');
+// ─── STATS ───────────────────────────────────────────────────
+function renderStats(){
+  const cur=getWeekKey();
+  const weeks=Object.entries(allWeeks)
+    .map(([k,v])=>({key:k,list:Object.values(v||{}),spent:Object.values(v||{}).reduce((s,t)=>s+Number(t.amount),0)}))
+    .sort((a,b)=>a.key.localeCompare(b.key));
+
+  // Group into months
+  const monthMap={};
+  weeks.forEach(w=>{
+    const mk=getMonthKey(w.key);
+    if(!monthMap[mk])monthMap[mk]={key:mk,weeks:[],spent:0,list:[]};
+    monthMap[mk].weeks.push(w);
+    monthMap[mk].spent+=w.spent;
+    monthMap[mk].list.push(...w.list);
   });
+  const months=Object.values(monthMap).sort((a,b)=>a.key.localeCompare(b.key));
+
+  const curWeek=weeks.find(w=>w.key===cur)||{key:cur,list:Object.values(txs),spent:Object.values(txs).reduce((s,t)=>s+Number(t.amount),0)};
+  const curMonthKey=getMonthKey(cur);
+  const curMonth=monthMap[curMonthKey]||{key:curMonthKey,weeks:[curWeek],spent:curWeek.spent,list:curWeek.list};
+
+  if(statsPeriod==='sem'){renderStatsSem(weeks,curWeek);}
+  else{renderStatsMois(months,curMonth);}
 }
 
-function switchTab(name) {
+function renderStatsSem(weeks,curWeek){
+  const total=curWeek.spent;
+  const remain=BUDGET-total;
+  const pct=Math.min(Math.round(total/BUDGET*100),100);
+  const cats=buildCatStats(curWeek.list);
+
+  updateStatsHeader(
+    fmt(total),
+    getWeekRange(curWeek.key)+' · '+curWeek.list.length+' dépenses',
+    pct,'#FAC775',fmt(BUDGET),'Dépensé',fmtS(total),'Restant',fmtS(Math.max(remain,0)),remain<0?'red':'grn','Moy./jour',fmtS(curWeek.list.length?Math.round(total/7):0)
+  );
+
+  const maxW=Math.max(...weeks.map(w=>w.spent),BUDGET_BASE,1);
+  const bars=weeks.map((w,i)=>{
+    const h=Math.max(8,Math.round((w.spent/maxW)*85));
+    const isCur=w.key===curWeek.key;
+    const color=isCur?'#1a56a0':w.spent>BUDGET_BASE?'#fca5a5':'#b0c4de';
+    const lbl='S'+(i+1);
+    return `<div class="bar-col${selWeekBar===i?' sel':''}" onclick="clickWeekBar(${i})">
+      <div class="bar-val">${Math.round(w.spent/1000)}k</div>
+      <div class="bar" style="height:${h}px;background:${color};"></div>
+      <div class="bar-lbl">${lbl}</div>
+    </div>`;
+  }).join('');
+
+  const donutSvg=buildDonutSvg(cats,110);
+
+  document.getElementById('stats-content').innerHTML=`
+    <div class="scard">
+      <div class="scard-title">Semaines <span class="scard-hint">appuie pour le détail</span></div>
+      <div class="bars-wrap">${bars}</div>
+      <div class="divider-line"><span>Budget ${fmt(BUDGET_BASE)}</span><span>Moy: ${fmt(Math.round(weeks.reduce((s,w)=>s+w.spent,0)/Math.max(weeks.length,1)))}</span></div>
+    </div>
+    <div id="week-detail-panel"></div>
+    <div class="scard">
+      <div class="scard-title">Par catégorie <span class="scard-hint">semaine en cours</span></div>
+      <div class="donut-wrap">
+        <div class="donut">${donutSvg}<div class="donut-center"><div class="dc-v">${fmtS(total)}</div><div class="dc-l">FCFP</div></div></div>
+        <div class="legend">${cats.map((c,i)=>`<div class="leg"><div class="leg-dot" style="background:${CAT_COLORS[i%CAT_COLORS.length]}"></div><div class="leg-name">${c.name}</div><div class="leg-right"><span class="leg-val">${fmtS(c.val)}</span><span class="leg-pct">${c.pct}%</span></div></div>`).join('')}</div>
+      </div>
+    </div>
+    <div class="scard">
+      <div class="scard-title">Export</div>
+      <div class="export-btn" onclick="exportExcel('sem')">
+        <div class="eb-ico">📊</div>
+        <div class="eb-info"><div class="eb-title">Exporter en Excel</div><div class="eb-sub">Semaine en cours</div></div>
+        <div class="eb-arrow">↓</div>
+      </div>
+    </div>`;
+
+  // Re-attach stored week data
+  window._statsWeeks=weeks;
+}
+
+function renderStatsMois(months,curMonth){
+  const total=curMonth.spent;
+  const budgetM=BUDGET_BASE*4;
+  const pct=Math.min(Math.round(total/budgetM*100),100);
+  const cats=buildCatStats(curMonth.list);
+  const mName=MONTHS_FR[parseInt(curMonth.key.split('-')[1])-1]+' '+curMonth.key.split('-')[0];
+
+  updateStatsHeader(
+    fmt(total),
+    mName+' · '+curMonth.weeks.length+' semaines · '+curMonth.list.length+' dépenses',
+    pct,'#FAC775',fmt(budgetM),'Dépensé',fmtS(total),'Économisé',fmtS(Math.max(budgetM-total,0)),'grn','Moy/sem',fmtS(curMonth.weeks.length?Math.round(total/curMonth.weeks.length):0)
+  );
+
+  const maxM=Math.max(...months.map(m=>m.spent),budgetM,1);
+  const bars=months.map((m,i)=>{
+    const h=Math.max(8,Math.round((m.spent/maxM)*85));
+    const isCur=m.key===curMonth.key;
+    const color=isCur?'#7c3aed':m.spent>budgetM?'#fca5a5':'#c4b5fd';
+    const lbl=MONTHS_SHORT[parseInt(m.key.split('-')[1])-1];
+    return `<div class="bar-col${selMonthBar===i?' sel':''}" onclick="clickMonthBar(${i})">
+      <div class="bar-val">${Math.round(m.spent/1000)}k</div>
+      <div class="bar" style="height:${h}px;background:${color};"></div>
+      <div class="bar-lbl">${lbl}</div>
+    </div>`;
+  }).join('');
+
+  const donutSvg=buildDonutSvg(cats,110);
+
+  document.getElementById('stats-content').innerHTML=`
+    <div class="scard">
+      <div class="scard-title">Mois <span class="scard-hint">appuie pour le détail</span></div>
+      <div class="bars-wrap">${bars}</div>
+      <div class="divider-line"><span>Budget mensuel ${fmt(budgetM)}</span><span>Moy: ${fmt(Math.round(months.reduce((s,m)=>s+m.spent,0)/Math.max(months.length,1)))}</span></div>
+    </div>
+    <div id="month-detail-panel"></div>
+    <div class="scard">
+      <div class="scard-title">Par catégorie <span class="scard-hint">mois en cours</span></div>
+      <div class="donut-wrap">
+        <div class="donut">${donutSvg}<div class="donut-center"><div class="dc-v">${fmtS(total)}</div><div class="dc-l">FCFP</div></div></div>
+        <div class="legend">${cats.map((c,i)=>`<div class="leg"><div class="leg-dot" style="background:${CAT_COLORS[i%CAT_COLORS.length]}"></div><div class="leg-name">${c.name}</div><div class="leg-right"><span class="leg-val">${fmtS(c.val)}</span><span class="leg-pct">${c.pct}%</span></div></div>`).join('')}</div>
+      </div>
+    </div>
+    <div class="scard">
+      <div class="scard-title">Export</div>
+      <div class="export-btn" onclick="exportExcel('mois')">
+        <div class="eb-ico">📊</div>
+        <div class="eb-info"><div class="eb-title">Exporter en Excel</div><div class="eb-sub">Mois en cours — ${mName}</div></div>
+        <div class="eb-arrow">↓</div>
+      </div>
+    </div>`;
+
+  window._statsMonths=months;
+}
+
+function updateStatsHeader(bigNum,bigSub,pct,progColor,progTotal,l1,v1,l2,v2,v2class,l3,v3){
+  document.getElementById('header-title').innerHTML='Statistiques <span class="sync-dot '+(document.getElementById('sync-dot').className.includes('loading')?'loading':document.getElementById('sync-dot').className.includes('off')?'off':'ok')+'" id="sync-dot"></span>';
+  document.getElementById('header-extra').innerHTML=`
+    <div class="stat-period-switch">
+      <div class="sps${statsPeriod==='sem'?' active':''}" onclick="switchStatsPeriod('sem',this)">Semaine</div>
+      <div class="sps${statsPeriod==='mois'?' active':''}" onclick="switchStatsPeriod('mois',this)">Mois</div>
+    </div>
+    <div class="stat-big">${bigNum}</div>
+    <div class="stat-big-sub">${bigSub}</div>
+    <div class="stat-prog-track"><div class="stat-prog-fill" style="width:${pct}%;background:${progColor};"></div></div>
+    <div class="stat-prog-labels"><span>${pct}% du budget</span><span>${progTotal}</span></div>`;
+  document.getElementById('sl1').textContent=l1;document.getElementById('sv1').textContent=v1;
+  document.getElementById('sl2').textContent=l2;document.getElementById('sv2').textContent=v2;document.getElementById('sv2').className='ssi-v '+v2class;
+  document.getElementById('sl3').textContent=l3;document.getElementById('sv3').textContent=v3;
+}
+
+function switchStatsPeriod(p){
+  statsPeriod=p;selWeekBar=null;selMonthBar=null;openDepWeek=false;openDepMonth=false;
+  renderStats();
+}
+
+function buildCatStats(list){
+  const total=list.reduce((s,t)=>s+Number(t.amount),0)||1;
+  const map={};
+  list.forEach(t=>{map[t.cat]=(map[t.cat]||0)+Number(t.amount);});
+  return Object.entries(map).sort((a,b)=>b[1]-a[1]).map(([name,val])=>({name,val,pct:Math.round(val/total*100)}));
+}
+
+function buildDonutSvg(cats,size){
+  const cx=size/2,cy=size/2,r=size*0.36,sw=size*0.13,circ=2*Math.PI*r;
+  let off=-circ*0.25;
+  const total=cats.reduce((s,c)=>s+c.val,0)||1;
+  const arcs=cats.map((c,i)=>{
+    const d=(c.val/total)*circ;
+    const a=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${CAT_COLORS[i%CAT_COLORS.length]}" stroke-width="${sw}" stroke-dasharray="${d.toFixed(1)} ${(circ-d).toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/>`;
+    off-=d;return a;
+  }).join('');
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="${sw}"/>${arcs}</svg>`;
+}
+
+function buildMiniDonut(cats,size,type){
+  const cx=size/2,cy=size/2,r=size*0.37,sw=size*0.13,circ=2*Math.PI*r;
+  let off=-circ*0.25;
+  const total=cats.reduce((s,c)=>s+c.val,0)||1;
+  const arcs=cats.map((c,i)=>{
+    const d=(c.val/total)*circ;
+    const a=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${CAT_COLORS[i%CAT_COLORS.length]}" stroke-width="${sw}" stroke-dasharray="${d.toFixed(1)} ${(circ-d).toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/>`;
+    off-=d;return a;
+  }).join('');
+  return `<div class="mini-donut" style="width:${size}px;height:${size}px;"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="${sw}"/>${arcs}</svg><div class="mini-center"><div class="mc-v ${type}">${fmtS(cats.reduce((s,c)=>s+c.val,0))}</div><div class="mc-l">FCFP</div></div></div>`;
+}
+
+function renderTxList(list,type){
+  if(!list.length)return '<div style="font-size:12px;color:#9ca3af;padding:8px 0;">Aucune dépense</div>';
+  const sorted=[...list].sort((a,b)=>b.date.localeCompare(a.date));
+  const grouped={};
+  sorted.forEach(t=>{if(!grouped[t.date])grouped[t.date]=[];grouped[t.date].push(t);});
+  return Object.entries(grouped).map(([date,items])=>{
+    const d=new Date(date+'T12:00:00');
+    const lbl=DAYS[d.getDay()]+' '+d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+    const rows=items.map(t=>{
+      const cat=CATS.find(c=>c.name===t.cat)||CATS[7];
+      return `<div class="dp-tx-item ${type==='month'?'month-tx':''}">
+        <div class="dp-tx-ico" style="background:${cat.bg}">${cat.icon}</div>
+        <div class="dp-tx-info"><div class="dp-tx-name">${t.desc||t.cat}</div><div class="dp-tx-sub">${t.cat} · ${t.who}</div></div>
+        <div class="dp-tx-amt">−${fmtS(Number(t.amount))} F</div>
+      </div>`;
+    }).join('');
+    return `<div class="day-lbl-small ${type==='month'?'month':''}">${lbl}</div>${rows}`;
+  }).join('');
+}
+
+function clickWeekBar(i){
+  const weeks=window._statsWeeks||[];
+  if(selWeekBar===i){selWeekBar=null;openDepWeek=false;document.getElementById('week-detail-panel').innerHTML='';renderStats();return;}
+  selWeekBar=i;openDepWeek=false;
+  const w=weeks[i];
+  const cats=buildCatStats(w.list);
+  const isCur=w.key===getWeekKey();
+  const diff=BUDGET_BASE-w.spent;
+  const badge=isCur?`<div class="dp-badge cur">En cours</div>`:diff>=0?`<div class="dp-badge ok">+${fmt(diff)}</div>`:`<div class="dp-badge over">−${fmt(Math.abs(diff))}</div>`;
+  const legs=cats.map((c,idx)=>`<div class="ml-item"><div class="ml-dot" style="background:${CAT_COLORS[idx%CAT_COLORS.length]}"></div><div class="ml-name">${c.name}</div><div class="ml-val">${fmtS(c.val)} F</div></div>`).join('');
+  const txHtml=renderTxList(w.list,'week');
+  const panel=document.getElementById('week-detail-panel');
+  panel.innerHTML=`<div class="detail-panel week">
+    <div class="dp-top">
+      <div><div class="dp-title week">S${i+1} — ${fmt(w.spent)}</div><div class="dp-dates week">${getWeekRange(w.key)}</div></div>
+      ${badge}
+    </div>
+    <div class="dp-chart">${buildMiniDonut(cats,76,'week')}<div class="mini-legend">${legs}</div></div>
+    <div class="dep-section">
+      <div class="dep-header" onclick="toggleDepWeek()">
+        <div class="dep-left"><div class="dep-title week">Dépenses</div><div class="dep-count week">${w.list.length}</div></div>
+        <div class="dep-arrow week" id="dep-arrow-week">▼</div>
+      </div>
+      <div class="dep-list" id="dep-list-week">
+        <div class="dep-list-inner">${txHtml}<div class="dep-total-row"><div class="dt-label">Total</div><div class="dt-val">−${fmt(w.spent)}</div></div></div>
+      </div>
+    </div>
+  </div>`;
+  renderStats();
+  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function toggleDepWeek(){
+  openDepWeek=!openDepWeek;
+  document.getElementById('dep-list-week').classList.toggle('open',openDepWeek);
+  document.getElementById('dep-arrow-week').classList.toggle('open',openDepWeek);
+}
+
+function clickMonthBar(i){
+  const months=window._statsMonths||[];
+  if(selMonthBar===i){selMonthBar=null;openDepMonth=false;document.getElementById('month-detail-panel').innerHTML='';renderStats();return;}
+  selMonthBar=i;openDepMonth=false;
+  const m=months[i];
+  const budgetM=BUDGET_BASE*4;
+  const cats=buildCatStats(m.list);
+  const isCur=m.key===getMonthKey(getWeekKey());
+  const diff=budgetM-m.spent;
+  const badge=isCur?`<div class="dp-badge mcur">En cours</div>`:diff>=0?`<div class="dp-badge ok">+${fmt(diff)}</div>`:`<div class="dp-badge over">−${fmt(Math.abs(diff))}</div>`;
+  const legs=cats.map((c,idx)=>`<div class="ml-item"><div class="ml-dot" style="background:${CAT_COLORS[idx%CAT_COLORS.length]}"></div><div class="ml-name">${c.name}</div><div class="ml-val">${fmtS(c.val)} F</div></div>`).join('');
+  const maxW=Math.max(...m.weeks.map(w=>w.spent),BUDGET_BASE,1);
+  const miniBars=m.weeks.map((w,wi)=>{const h=Math.max(4,Math.round((w.spent/maxW)*36));const c=w.spent>BUDGET_BASE?'#fca5a5':'#c4b5fd';return `<div class="dmb-col"><div class="dmb-val">${Math.round(w.spent/1000)}k</div><div class="dmb-bar" style="height:${h}px;background:${c};"></div><div class="dmb-lbl">S${wi+1}</div></div>`;}).join('');
+  const mName=MONTHS_FR[parseInt(m.key.split('-')[1])-1]+' '+m.key.split('-')[0];
+  const txHtml=renderTxList(m.list,'month');
+  const panel=document.getElementById('month-detail-panel');
+  panel.innerHTML=`<div class="detail-panel month">
+    <div class="dp-top">
+      <div><div class="dp-title month">${mName} — ${fmt(m.spent)}</div><div class="dp-dates month">${m.weeks.length} semaines · ${m.list.length} dépenses</div></div>
+      ${badge}
+    </div>
+    <div style="margin-bottom:10px;"><div class="dp-mini-bars">${miniBars}</div></div>
+    <div class="dp-chart">${buildMiniDonut(cats,76,'month')}<div class="mini-legend">${legs}</div></div>
+    <div class="dep-section month-dep">
+      <div class="dep-header" onclick="toggleDepMonth()">
+        <div class="dep-left"><div class="dep-title month">Dépenses</div><div class="dep-count month">${m.list.length}</div></div>
+        <div class="dep-arrow month" id="dep-arrow-month">▼</div>
+      </div>
+      <div class="dep-list" id="dep-list-month">
+        <div class="dep-list-inner">${txHtml}<div class="dep-total-row month"><div class="dt-label">Total</div><div class="dt-val">−${fmt(m.spent)}</div></div></div>
+      </div>
+    </div>
+  </div>`;
+  renderStats();
+  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function toggleDepMonth(){
+  openDepMonth=!openDepMonth;
+  document.getElementById('dep-list-month').classList.toggle('open',openDepMonth);
+  document.getElementById('dep-arrow-month').classList.toggle('open',openDepMonth);
+}
+
+// ─── EXCEL EXPORT ────────────────────────────────────────────
+function exportExcel(period){
+  const cur=getWeekKey();
+  const curMonthKey=getMonthKey(cur);
+  let data=[];
+  let filename='';
+
+  if(period==='sem'){
+    const list=Object.values(txs);
+    filename='budget_semaine_'+cur+'.xlsx';
+    data=[['Date','Description','Catégorie','Montant FCFP','Saisi par'],...list.sort((a,b)=>b.date.localeCompare(a.date)).map(t=>[t.date,t.desc||t.cat,t.cat,Number(t.amount),t.who]),['','','','',''],['TOTAL','','',list.reduce((s,t)=>s+Number(t.amount),0),'']];
+  } else {
+    const allList=[];
+    Object.entries(allWeeks).forEach(([k,v])=>{if(getMonthKey(k)===curMonthKey)allList.push(...Object.values(v||{}));});
+    const mName=MONTHS_FR[parseInt(curMonthKey.split('-')[1])-1]+'_'+curMonthKey.split('-')[0];
+    filename='budget_'+mName+'.xlsx';
+    data=[['Date','Description','Catégorie','Montant FCFP','Saisi par'],...allList.sort((a,b)=>b.date.localeCompare(a.date)).map(t=>[t.date,t.desc||t.cat,t.cat,Number(t.amount),t.who]),['','','','',''],['TOTAL','','',allList.reduce((s,t)=>s+Number(t.amount),0),'']];
+  }
+
+  const ws=XLSX.utils.aoa_to_sheet(data);
+  ws['!cols']=[{wch:12},{wch:25},{wch:15},{wch:15},{wch:15}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Budget');
+  XLSX.writeFile(wb,filename);
+}
+
+// ─── HISTORY ─────────────────────────────────────────────────
+function renderHistory(){
+  const cur=getWeekKey();
+  const past=Object.entries(allWeeks)
+    .filter(([k])=>k!==cur)
+    .map(([k,v])=>{const l=Object.values(v||{});return{weekKey:k,spent:l.reduce((s,t)=>s+Number(t.amount),0),count:l.length};})
+    .sort((a,b)=>b.weekKey.localeCompare(a.weekKey));
+  const el=document.getElementById('hist-list');
+  if(!past.length){el.innerHTML='<div class="empty-msg">Aucun historique pour l\'instant.</div>';return;}
+  el.innerHTML=past.map(h=>{
+    const pct=Math.round(h.spent/BUDGET_BASE*100);
+    const diff=BUDGET_BASE-h.spent;
+    const diffLabel=diff>=0?'+'+fmt(diff):'-'+fmt(Math.abs(diff));
+    const diffColor=diff>=0?'var(--green)':'var(--red)';
+    return `<div class="hist-item">
+      <div><div class="hist-week">${getWeekRange(h.weekKey)}</div><div class="hist-dates">${h.count} dépense${h.count>1?'s':''} · <span style="color:${diffColor};font-weight:600;">${diffLabel} reporté</span></div></div>
+      <div style="text-align:right"><div class="hist-amt ${h.spent>BUDGET_BASE?'over':'ok'}" style="font-size:15px;font-weight:600;">${fmt(h.spent)}</div><div class="hist-pct">${pct}% du budget</div></div>
+    </div>`;
+  }).join('');
+}
+
+// ─── TABS ────────────────────────────────────────────────────
+function switchTab(name){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
-  if(name==='hist') renderHistory();
-}
 
-function editName() {
-  const newName = prompt('Modifier ton prénom :', myName);
-  if (newName && newName.trim()) {
-    myName = newName.trim();
-    localStorage.setItem('myName', myName);
-    document.getElementById('user-name-label').textContent = myName + ' ✏️';
-    setTimeout(() => document.getElementById('user-name-label').textContent = myName, 2000);
+  if(name==='home'){
+    document.getElementById('header-title').innerHTML='Budget semaine <span class="sync-dot" id="sync-dot"></span>';
+    document.getElementById('sl1').textContent='Dépensé';
+    document.getElementById('sl2').textContent='Restant';
+    document.getElementById('sl3').textContent='Moy./jour';
+    render();
+  } else if(name==='stats'){
+    renderStats();
+  } else if(name==='hist'){
+    document.getElementById('header-title').innerHTML='Historique <span class="sync-dot" id="sync-dot"></span>';
+    document.getElementById('header-extra').innerHTML='';
+    renderHistory();
   }
 }
 
+// ─── EVENTS ──────────────────────────────────────────────────
 document.getElementById('f-amount').addEventListener('keydown',e=>{if(e.key==='Enter')addTx();});
 document.getElementById('f-desc').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('f-amount').focus();});
 document.getElementById('setup-name').addEventListener('keydown',e=>{if(e.key==='Enter')saveName();});
+document.getElementById('f-date').value=isoToday();
 
-document.getElementById('f-date').value = isoToday();
 init();
 </script>
 </body>
