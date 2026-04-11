@@ -3,683 +3,452 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#E91E8C">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Mon Cycle">
-<title>Mon Cycle</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#1a56a0">
+<title>Budget semaine</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
-
-:root {
-  --pink: #E91E8C;
-  --pink-dark: #C2185B;
-  --pink-light: #FCE4EC;
-  --green: #4CAF50;
-  --green-light: #E8F5E9;
-  --bg: #F5F5F5;
-  --card: #FFFFFF;
-  --text: #1A1A1A;
-  --text-sec: #757575;
-  --border: #EEEEEE;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { width: 100%; height: 100%; font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); overflow: hidden; }
-
-.app { display: flex; flex-direction: column; width: 100vw; height: 100vh; height: 100dvh; }
-
-/* AUTH */
-#auth-screen {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  width: 100vw; height: 100vh; height: 100dvh;
-  background: var(--bg); padding: 32px 24px;
-}
-.auth-logo  { font-size: 56px; margin-bottom: 14px; }
-.auth-title { font-size: 28px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-.auth-sub   { font-size: 14px; color: var(--text-sec); margin-bottom: 36px; text-align: center; line-height: 1.5; }
-.auth-form  { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 12px; }
-.auth-mode-title { font-size: 18px; font-weight: 600; color: var(--text); text-align: center; }
-.auth-error { background: #FFF3F3; border: 1px solid #FFCDD2; color: #C62828; border-radius: 12px; padding: 11px 14px; font-size: 13px; display: none; text-align: center; line-height: 1.5; }
-.auth-input {
-  width: 100%; padding: 15px 16px; border: 1.5px solid var(--border);
-  border-radius: 14px; font-size: 16px; font-family: inherit;
-  background: var(--card); color: var(--text); outline: none; transition: border-color 0.2s;
-}
-.auth-input:focus { border-color: var(--pink); }
-.auth-btn {
-  width: 100%; padding: 16px; background: var(--pink); color: #fff;
-  border: none; border-radius: 14px; font-size: 16px; font-weight: 600;
-  cursor: pointer; font-family: inherit; margin-top: 4px;
-}
-.auth-btn:active { background: var(--pink-dark); }
-.auth-toggle { text-align: center; font-size: 14px; color: var(--text-sec); cursor: pointer; }
-.auth-toggle span { color: var(--pink); font-weight: 600; }
-
-/* LOADING */
-.loading {
-  position: fixed; inset: 0; background: rgba(255,255,255,0.9);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 999; flex-direction: column; gap: 14px;
-}
-.spinner {
-  width: 38px; height: 38px; border-radius: 50%;
-  border: 3px solid var(--pink-light); border-top-color: var(--pink);
-  animation: spin 0.75s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-text { font-size: 14px; color: var(--text-sec); }
-
-/* TOP BAR */
-.top-bar {
-  background: var(--pink);
-  padding: 14px 18px 16px;
-  padding-top: calc(14px + env(safe-area-inset-top, 0px));
-  flex-shrink: 0;
-}
-.top-bar-row   { display: flex; align-items: center; justify-content: space-between; }
-.top-bar-title { font-size: 20px; font-weight: 600; color: #fff; }
-.top-bar-email { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; }
-.logout-btn    {
-  background: rgba(255,255,255,0.2); border: none; color: #fff;
-  border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 600;
-  cursor: pointer; font-family: inherit; white-space: nowrap;
-}
-.logout-btn:active { background: rgba(255,255,255,0.35); }
-
-/* CONTENT */
-.content {
-  flex: 1; overflow-y: auto; overflow-x: hidden;
-  -webkit-overflow-scrolling: touch; padding: 14px 12px;
-  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
-}
-.content::-webkit-scrollbar { display: none; }
-.tab-page { display: none; }
-.tab-page.active { display: block; }
-
-/* NEXT BANNER */
-.next-banner {
-  background: var(--pink); border-radius: 16px; padding: 18px 20px;
-  margin-bottom: 12px; display: none; position: relative; overflow: hidden;
-}
-.next-banner::after { content:''; position:absolute; right:-16px; top:-16px; width:90px; height:90px; background:rgba(255,255,255,0.1); border-radius:50%; }
-.nb-label { font-size:11px; color:rgba(255,255,255,0.8); font-weight:600; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:5px; }
-.nb-date  { font-size:22px; font-weight:600; color:#fff; }
-.nb-days  { font-size:13px; color:rgba(255,255,255,0.85); margin-top:4px; }
-.nb-dot   { position:absolute; right:18px; top:50%; transform:translateY(-50%); font-size:28px; }
-
-/* STATS */
-.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
-.stat-tile { background:var(--card); border-radius:14px; padding:14px 6px; text-align:center; }
-.stat-num  { font-size:26px; font-weight:600; color:var(--pink); line-height:1; }
-.stat-lbl  { font-size:10px; color:var(--text-sec); margin-top:5px; line-height:1.3; }
-
-/* CARD */
-.card { background:var(--card); border-radius:16px; margin-bottom:12px; overflow:hidden; }
-.card-head { padding:16px 16px 8px; display:flex; align-items:center; justify-content:space-between; }
-.card-title { font-size:14px; font-weight:600; color:var(--text); }
-
-/* CALENDAR */
-.cal-nav { display:flex; align-items:center; gap:4px; }
-.cal-nav-btn { width:36px; height:36px; border-radius:50%; border:none; background:var(--bg); font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text); font-family:inherit; }
-.cal-nav-btn:active { background:#e0e0e0; }
-.cal-month { font-size:14px; font-weight:600; color:var(--text); min-width:116px; text-align:center; }
-.cal-grid  { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; padding:0 10px 8px; }
-.cal-hdr   { font-size:10px; color:var(--text-sec); text-align:center; padding:4px 0 6px; font-weight:600; }
-.day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:13px; cursor:pointer; color:var(--text); transition:transform 0.1s; -webkit-user-select:none; user-select:none; }
-.day:active { transform:scale(0.82); }
-.day.empty  { cursor:default; pointer-events:none; }
-.day.fertile   { background:var(--green-light); color:#2E7D32; }
-.day.ovulation { background:var(--green); color:#fff; font-weight:600; }
-.day.period    { background:var(--pink); color:#fff; font-weight:600; border-radius:10px; }
-.day.predicted { background:var(--pink-light); color:var(--pink-dark); border-radius:10px; }
-.day.today:not(.period):not(.predicted) { outline:2.5px solid var(--pink); outline-offset:-2px; }
-.day.selected:not(.period):not(.predicted):not(.ovulation):not(.fertile) { background:#EEEEEE; }
-
-.legend { display:flex; flex-wrap:wrap; gap:8px 14px; padding:2px 14px 14px; }
-.leg     { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text-sec); }
-.leg-dot { width:14px; height:8px; border-radius:4px; flex-shrink:0; }
-
-/* CYCLE BAR */
-.cyc-wrap  { padding:0 14px 14px; }
-.cyc-label { font-size:12px; color:var(--text-sec); margin-bottom:6px; font-weight:500; }
-.cyc-bar   { height:6px; border-radius:3px; background:var(--border); overflow:hidden; }
-.cyc-fill  { height:100%; border-radius:3px; background:var(--pink); transition:width 0.4s ease; }
-
-/* LOG */
-.log-section { padding:12px 14px 16px; border-top:1px solid var(--border); }
-.log-label   { font-size:11px; font-weight:600; color:var(--text-sec); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:8px; }
-.sel-date    { font-size:15px; font-weight:500; color:var(--text); margin-bottom:14px; min-height:22px; }
-.sel-date.ph { color:var(--text-sec); font-weight:400; }
-.btn-row     { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.btn         { padding:15px 8px; border-radius:14px; font-size:14px; font-weight:600; cursor:pointer; border:none; font-family:inherit; transition:transform 0.1s; line-height:1.2; }
-.btn:active  { transform:scale(0.95); }
-.btn-fill    { background:var(--pink); color:#fff; }
-.btn-soft    { background:var(--pink-light); color:var(--pink); }
-
-/* PHASE */
-.phase-card  { background:var(--card); border-radius:16px; padding:16px; margin-bottom:12px; border-left:4px solid var(--pink); display:none; }
-.phase-badge { display:inline-block; font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; margin-bottom:8px; letter-spacing:0.04em; text-transform:uppercase; }
-.phase-name  { font-size:16px; font-weight:600; color:var(--text); margin-bottom:4px; }
-.phase-desc  { font-size:13px; color:var(--text-sec); line-height:1.55; }
-
-/* HISTORY */
-.hist-item   { padding:16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
-.hist-item:last-child { border-bottom:none; }
-.hist-date   { font-size:15px; font-weight:600; color:var(--text); }
-.hist-sub    { font-size:12px; color:var(--text-sec); margin-top:3px; }
-.hist-right  { display:flex; align-items:center; gap:10px; }
-.hist-badge  { background:var(--pink-light); color:var(--pink-dark); font-size:13px; font-weight:600; padding:5px 12px; border-radius:20px; }
-.del-btn     { width:32px; height:32px; border-radius:50%; background:var(--bg); border:none; color:var(--text-sec); font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; }
-.del-btn:active { background:#ffebee; color:#e53935; }
-.empty-state { padding:48px 20px; text-align:center; color:var(--text-sec); }
-.empty-icon  { font-size:44px; margin-bottom:14px; opacity:0.35; }
-.empty-text  { font-size:14px; }
-
-/* SETTINGS */
-.sett-section { font-size:11px; font-weight:600; color:var(--text-sec); letter-spacing:0.07em; text-transform:uppercase; padding:0 4px 8px; }
-.sett-item    { padding:16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
-.sett-item:last-child { border-bottom:none; }
-.sett-lbl  { font-size:15px; color:var(--text); font-weight:500; }
-.sett-sub  { font-size:12px; color:var(--text-sec); margin-top:2px; }
-.sett-ctrl { display:flex; align-items:center; gap:10px; }
-.sett-num  { font-size:18px; font-weight:600; color:var(--pink); min-width:32px; text-align:center; }
-.sett-btn  { width:34px; height:34px; border-radius:50%; border:2px solid var(--pink); background:#fff; font-size:20px; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; color:var(--pink); font-weight:600; }
-.sett-btn:active { background:var(--pink-light); }
-.danger-btn { width:100%; padding:15px; background:#fff; border:1.5px solid #FFCDD2; color:#E53935; border-radius:14px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; }
-.danger-btn:active { background:#FFF3F3; }
-.priv-note  { margin-top:20px; text-align:center; font-size:12px; color:#bbb; line-height:1.7; }
-
-/* BOTTOM NAV */
-.bottom-nav { position:fixed; bottom:0; left:0; right:0; background:var(--card); border-top:1px solid var(--border); display:flex; padding:6px 0; padding-bottom:calc(6px + env(safe-area-inset-bottom,0px)); z-index:100; }
-.nav-item   { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:5px 0; }
-.nav-item:active { opacity:0.6; }
-.nav-icon   { width:26px; height:26px; }
-.nav-lbl    { font-size:10px; color:var(--text-sec); font-weight:500; }
-.nav-item.active .nav-lbl { color:var(--pink); }
-
-/* TOAST */
-.toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%); background:rgba(26,26,26,0.92); color:#fff; padding:11px 22px; border-radius:24px; font-size:13px; font-weight:500; opacity:0; transition:opacity 0.25s; pointer-events:none; white-space:nowrap; z-index:9999; font-family:'DM Sans',sans-serif; }
-.toast.show { opacity:1; }
+:root{--blue:#1a56a0;--blue-light:#e8f0fb;--red:#c0392b;--red-light:#fdecea;--orange:#d4720a;--orange-light:#fef3e2;--green:#1e7e4a;--bg:#f2f4f8;--card:#ffffff;--text:#1a1a2e;--muted:#7a7f9a;--border:rgba(0,0,0,0.08);--radius:18px;--radius-sm:12px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;display:flex;flex-direction:column;max-width:430px;margin:0 auto;overflow-x:hidden;}
+.header{background:var(--blue);padding:env(safe-area-inset-top,12px) 20px 0;color:white;}
+.header-top{display:flex;justify-content:space-between;align-items:center;padding:14px 0 16px;}
+.header-top h1{font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#4caf50;display:inline-block;flex-shrink:0;}
+.sync-dot.off{background:#f44336;}
+.sync-dot.loading{background:#FAC775;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.stats-strip{background:var(--card);display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--border);}
+.stat-item{padding:14px 16px;border-right:1px solid var(--border);}
+.stat-item:last-child{border-right:none;}
+.stat-label{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.stat-val{font-size:14px;font-weight:600;}
+.stat-val.red{color:var(--red);}
+.stat-val.grn{color:var(--green);}
+.alert{margin:12px 16px 0;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;font-weight:500;display:none;}
+.alert.show{display:block;}
+.alert.warn{background:var(--orange-light);color:var(--orange);}
+.alert.danger{background:var(--red-light);color:var(--red);}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(80px + env(safe-area-inset-bottom,0px));}
+.form-card{background:var(--card);margin:12px 16px 0;border-radius:var(--radius);padding:16px;border:1px solid var(--border);}
+.form-title{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;}
+.who-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.who-btn{padding:9px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);text-align:center;transition:all .15s;}
+.who-btn.active{background:var(--blue-light);border-color:var(--blue);color:var(--blue);}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px;}
+.cat-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 4px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-size:11px;color:var(--muted);font-family:inherit;transition:all .15s;}
+.cat-btn .ce{font-size:20px;}
+.cat-btn.active{background:var(--blue-light);border-color:var(--blue);color:var(--blue);font-weight:600;}
+.inputs-row{display:flex;gap:8px;margin-bottom:12px;}
+.input-wrap{flex:1;}
+.input-wrap label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px;font-weight:500;}
+.input-wrap input{width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-family:inherit;font-size:15px;color:var(--text);outline:none;-webkit-appearance:none;}
+.input-wrap input:focus{border-color:var(--blue);background:white;}
+.input-amount{font-size:18px !important;font-weight:600;}
+.btn-add{width:100%;padding:13px;border-radius:var(--radius-sm);border:none;background:var(--blue);color:white;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s,transform .1s;}
+.btn-add:active{opacity:.85;transform:scale(.98);}
+.tx-section{margin:16px 16px 0;}
+.tx-section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.tx-section-head span{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.tx-section-head button{font-size:12px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:inherit;}
+.tx-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.day-label{font-size:12px;font-weight:600;color:var(--muted);padding:12px 14px 6px;background:var(--bg);}
+.tx-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--border);}
+.tx-item:last-child{border-bottom:none;}
+.tx-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.tx-info{flex:1;min-width:0;}
+.tx-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tx-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.who-badge{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:6px;margin-left:4px;}
+.who-badge.moi{background:#e8f0fb;color:#1a56a0;}
+.who-badge.elle{background:#fce8f0;color:#a0195a;}
+.tx-right{display:flex;align-items:center;gap:8px;}
+.tx-amt{font-size:15px;font-weight:600;color:var(--red);white-space:nowrap;}
+.tx-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:0;}
+.empty-msg{text-align:center;padding:28px;color:var(--muted);font-size:14px;}
+.hist-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.hist-item{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border);}
+.hist-item:last-child{border-bottom:none;}
+.hist-week{font-size:13px;font-weight:500;}
+.hist-dates{font-size:11px;color:var(--muted);margin-top:2px;}
+.hist-amt.over{color:var(--red);}
+.hist-amt.ok{color:var(--green);}
+.hist-pct{font-size:11px;color:var(--muted);text-align:right;margin-top:2px;}
+.tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--card);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:100;}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 12px;cursor:pointer;gap:3px;border:none;background:none;font-family:inherit;}
+.tab-icon{font-size:22px;}
+.tab-label{font-size:10px;color:var(--muted);font-weight:500;}
+.tab.active .tab-label{color:var(--blue);}
+.screen{display:none;}
+.screen.active{display:block;}
+.setup-wrap{display:flex;flex:1;align-items:center;justify-content:center;min-height:100dvh;background:var(--bg);}
+.setup-box{padding:32px 24px;text-align:center;max-width:360px;width:100%;}
+.setup-box h2{font-size:22px;font-weight:600;margin-bottom:8px;}
+.setup-box p{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6;}
+.setup-box input{width:100%;padding:14px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:white;font-family:inherit;font-size:18px;font-weight:500;text-align:center;outline:none;margin-bottom:16px;}
+.setup-box input:focus{border-color:var(--blue);}
+.setup-box button{width:100%;padding:14px;border-radius:var(--radius-sm);border:none;background:var(--blue);color:white;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;}
 </style>
 </head>
 <body>
 
-<!-- ÉCRAN DE CONNEXION -->
-<div id="auth-screen">
-  <div class="auth-logo">🌸</div>
-  <div class="auth-title">Mon Cycle</div>
-  <div class="auth-sub">Connecte-toi pour retrouver<br>ton suivi sur tous tes appareils</div>
-  <div class="auth-form">
-    <div class="auth-mode-title" id="auth-mode-title">Connexion</div>
-    <div class="auth-error" id="auth-error"></div>
-    <input class="auth-input" type="email"    id="auth-email"    placeholder="Adresse email"  autocomplete="email">
-    <input class="auth-input" type="password" id="auth-password" placeholder="Mot de passe"   autocomplete="current-password">
-    <button class="auth-btn" id="auth-submit" onclick="authSubmit()">Se connecter</button>
-    <div class="auth-toggle" id="auth-toggle" onclick="toggleAuthMode()">
-      Pas encore de compte ? <span>Créer un compte</span>
+<div id="setup-screen" style="display:none;">
+  <div class="setup-wrap">
+    <div class="setup-box">
+      <div style="font-size:48px;margin-bottom:16px;">👋</div>
+      <h2>Bienvenue !</h2>
+      <p>Première ouverture de l'app.<br>Comment tu t'appelles ?</p>
+      <input type="text" id="setup-name" placeholder="Ton prénom" autocomplete="off" maxlength="20" />
+      <button onclick="saveName()">Commencer</button>
     </div>
   </div>
 </div>
 
-<!-- APP PRINCIPALE -->
-<div class="app" id="main-app" style="display:none">
+<div id="app" style="display:none;flex-direction:column;flex:1;min-height:100dvh;">
+  <div class="header">
+    <div class="header-top">
+      <h1>Budget semaine <span class="sync-dot loading" id="sync-dot"></span></h1>
+      <span style="font-size:12px;opacity:.75;" id="user-name-label"></span>
+    </div>
+    <div id="header-extra"></div>
+  </div>
 
-  <div class="top-bar">
-    <div class="top-bar-row">
-      <div>
-        <div class="top-bar-title" id="page-title">Mon cycle</div>
-        <div class="top-bar-email" id="user-email"></div>
+  <div class="stats-strip">
+    <div class="stat-item"><div class="stat-label">Dépensé</div><div class="stat-val red" id="stat-spent">0</div></div>
+    <div class="stat-item"><div class="stat-label">Restant</div><div class="stat-val grn" id="stat-remain">30 000</div></div>
+    <div class="stat-item"><div class="stat-label">Moy./jour</div><div class="stat-val" id="stat-avg">0</div></div>
+  </div>
+
+  <div class="content">
+    <div class="screen active" id="screen-home">
+      <div class="alert" id="alert-box"></div>
+      <div class="form-card">
+        <div class="form-title">Nouvelle dépense</div>
+        <div class="who-row">
+          <button class="who-btn active" onclick="pickWho('moi',this)" id="who-moi">👤 Moi</button>
+          <button class="who-btn" onclick="pickWho('elle',this)" id="who-elle">👤 <span id="partner-label">Ma femme</span></button>
+        </div>
+        <div class="cat-grid" id="cat-grid"></div>
+        <div class="inputs-row">
+          <div class="input-wrap" style="flex:2">
+            <label>Description</label>
+            <input type="text" id="f-desc" placeholder="ex. Carrefour" autocomplete="off" />
+          </div>
+          <div class="input-wrap" style="flex:1.2">
+            <label>Montant FCFP</label>
+            <input type="number" id="f-amount" class="input-amount" placeholder="0" inputmode="numeric" min="0" />
+          </div>
+        </div>
+        <div class="inputs-row">
+          <div class="input-wrap" style="flex:1">
+            <label>Date</label>
+            <input type="date" id="f-date" />
+          </div>
+        </div>
+        <button class="btn-add" onclick="addTx()">+ Enregistrer</button>
       </div>
-      <button class="logout-btn" onclick="doLogout()">Déconnexion</button>
+      <div class="tx-section">
+        <div class="tx-section-head">
+          <span>Cette semaine</span>
+          <button onclick="clearWeek()">Tout effacer</button>
+        </div>
+        <div class="tx-card" id="tx-list"></div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-hist">
+      <div class="tx-section" style="margin-top:16px;">
+        <div class="tx-section-head"><span>Semaines passées</span></div>
+        <div class="hist-card" id="hist-list"></div>
+      </div>
     </div>
   </div>
 
-  <div class="content" id="content">
-
-    <!-- ACCUEIL -->
-    <div class="tab-page active" id="tab-home">
-      <div class="next-banner" id="next-banner">
-        <div class="nb-label">Prochaines règles</div>
-        <div class="nb-date" id="nb-date">—</div>
-        <div class="nb-days" id="nb-days"></div>
-        <div class="nb-dot">🌸</div>
-      </div>
-      <div class="stats-row">
-        <div class="stat-tile"><div class="stat-num" id="st-cycle">—</div><div class="stat-lbl">Jours<br>cycle</div></div>
-        <div class="stat-tile"><div class="stat-num" id="st-period">—</div><div class="stat-lbl">Jours<br>règles</div></div>
-        <div class="stat-tile"><div class="stat-num" id="st-count">0</div><div class="stat-lbl">Cycles<br>enregistrés</div></div>
-      </div>
-      <div class="phase-card" id="phase-card">
-        <span class="phase-badge" id="phase-badge"></span>
-        <div class="phase-name" id="phase-name"></div>
-        <div class="phase-desc" id="phase-desc"></div>
-      </div>
-      <div class="card">
-        <div class="card-head">
-          <div class="cal-month" id="cal-month"></div>
-          <div class="cal-nav">
-            <button class="cal-nav-btn" onclick="prevMonth()">‹</button>
-            <button class="cal-nav-btn" onclick="nextMonth()">›</button>
-          </div>
-        </div>
-        <div class="cal-grid" id="cal-grid"></div>
-        <div class="cyc-wrap" id="cyc-wrap" style="display:none">
-          <div class="cyc-label" id="cyc-label"></div>
-          <div class="cyc-bar"><div class="cyc-fill" id="cyc-fill" style="width:0%"></div></div>
-        </div>
-        <div class="legend">
-          <div class="leg"><div class="leg-dot" style="background:#E91E8C"></div>Règles</div>
-          <div class="leg"><div class="leg-dot" style="background:#FCE4EC;border:1px solid #E91E8C"></div>Prévues</div>
-          <div class="leg"><div class="leg-dot" style="background:#4CAF50"></div>Ovulation</div>
-          <div class="leg"><div class="leg-dot" style="background:#E8F5E9;border:1px solid #4CAF50"></div>Fertile</div>
-        </div>
-        <div class="log-section">
-          <div class="log-label">Enregistrer</div>
-          <div class="sel-date ph" id="sel-show">Appuie sur un jour du calendrier</div>
-          <div class="btn-row">
-            <button class="btn btn-fill" onclick="logStart()">+ Début règles</button>
-            <button class="btn btn-soft" onclick="logEnd()">+ Fin règles</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- HISTORIQUE -->
-    <div class="tab-page" id="tab-hist">
-      <div class="card"><div id="hist-list"></div></div>
-    </div>
-
-    <!-- RÉGLAGES -->
-    <div class="tab-page" id="tab-sett">
-      <div class="sett-section">Paramètres</div>
-      <div class="card" style="margin-bottom:16px">
-        <div class="sett-item">
-          <div><div class="sett-lbl">Durée du cycle</div><div class="sett-sub">Jours entre les règles</div></div>
-          <div class="sett-ctrl">
-            <button class="sett-btn" onclick="adj('cycle',-1)">−</button>
-            <div class="sett-num" id="sv-cycle">28</div>
-            <button class="sett-btn" onclick="adj('cycle',1)">+</button>
-          </div>
-        </div>
-        <div class="sett-item">
-          <div><div class="sett-lbl">Durée des règles</div><div class="sett-sub">Nombre de jours moyen</div></div>
-          <div class="sett-ctrl">
-            <button class="sett-btn" onclick="adj('period',-1)">−</button>
-            <div class="sett-num" id="sv-period">5</div>
-            <button class="sett-btn" onclick="adj('period',1)">+</button>
-          </div>
-        </div>
-        <div class="sett-item">
-          <div><div class="sett-lbl">Cycles à projeter</div><div class="sett-sub">Cycles futurs affichés</div></div>
-          <div class="sett-ctrl">
-            <button class="sett-btn" onclick="adj('proj',-1)">−</button>
-            <div class="sett-num" id="sv-proj">3</div>
-            <button class="sett-btn" onclick="adj('proj',1)">+</button>
-          </div>
-        </div>
-      </div>
-      <div class="sett-section">Données</div>
-      <div class="card" style="padding:14px">
-        <button class="danger-btn" onclick="clearAll()">Effacer toutes les données</button>
-      </div>
-      <div class="priv-note">Tes données sont sauvegardées de façon sécurisée<br>sur Firebase. Accessibles depuis n'importe quel appareil.</div>
-    </div>
-
+  <div class="tab-bar">
+    <button class="tab active" id="tab-home" onclick="switchTab('home')">
+      <span class="tab-icon">📊</span><span class="tab-label">Semaine</span>
+    </button>
+    <button class="tab" id="tab-hist" onclick="switchTab('hist')">
+      <span class="tab-icon">📅</span><span class="tab-label">Historique</span>
+    </button>
   </div>
-
-  <div class="bottom-nav">
-    <div class="nav-item active" id="nav-home" onclick="goTab('home')">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round">
-        <circle cx="12" cy="12" r="10" stroke="#E91E8C"/><path d="M12 6v6l4 2" stroke="#E91E8C"/>
-      </svg>
-      <div class="nav-lbl" style="color:#E91E8C">Accueil</div>
-    </div>
-    <div class="nav-item" id="nav-hist" onclick="goTab('hist')">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
-        <rect x="9" y="3" width="6" height="4" rx="2"/>
-        <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/>
-      </svg>
-      <div class="nav-lbl">Historique</div>
-    </div>
-    <div class="nav-item" id="nav-sett" onclick="goTab('sett')">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
-      </svg>
-      <div class="nav-lbl">Réglages</div>
-    </div>
-  </div>
-
 </div>
 
-<div class="loading" id="loading">
-  <div class="spinner"></div>
-  <div class="loading-text" id="loading-text">Chargement...</div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script type="module">
-import { initializeApp }                                                            from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-         signOut, onAuthStateChanged }                                              from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc }                                       from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-/* ── Firebase init ── */
-const app = initializeApp({
-  apiKey:            "AIzaSyDU0ArCq7kz5G4fxO-1AsmXouM7WcOGns0",
-  authDomain:        "mon-cycle-737e5.firebaseapp.com",
-  projectId:         "mon-cycle-737e5",
-  storageBucket:     "mon-cycle-737e5.firebasestorage.app",
-  messagingSenderId: "153621529995",
-  appId:             "1:153621529995:web:d52d9978751ee2063d1b8e"
-});
-const auth = getAuth(app);
-const db   = getFirestore(app);
-
-/* ── State ── */
-const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-const DAYS   = ['Lu','Ma','Me','Je','Ve','Sa','Di'];
-const PHASES = [
-  { name:'Menstruation',       col:'#E91E8C', bg:'#FCE4EC', desc:'Tes règles ont lieu. Repose-toi et prends soin de toi.' },
-  { name:'Phase folliculaire',  col:'#FF9800', bg:'#FFF3E0', desc:'Ton corps se prépare à l\'ovulation. L\'énergie remonte !' },
-  { name:'Ovulation',           col:'#4CAF50', bg:'#E8F5E9', desc:'Ton ovule est libéré. C\'est la période la plus fertile.' },
-  { name:'Phase lutéale',       col:'#9C27B0', bg:'#F3E5F5', desc:'Le corps se prépare. Quelques symptômes du SPM peuvent apparaître.' }
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+const BUDGET_BASE = 30000;
+let BUDGET = 30000;
+const CATS = [
+  {name:'Courses',    icon:'🛒', bg:'#e8f0fb'},
+  {name:'Voiture',   icon:'🚗', bg:'#fef3e2'},
+  {name:'Restaurant',icon:'🍽️', bg:'#f0eeff'},
+  {name:'Loisirs',   icon:'🎉', bg:'#e8f7ee'},
+  {name:'Santé',     icon:'💊', bg:'#fdecea'},
+  {name:'Vêtements', icon:'👗', bg:'#fce8f0'},
+  {name:'Maison',    icon:'🏠', bg:'#edf7e8'},
+  {name:'Retrait',    icon:'💵', bg:'#f2f4f8'},
 ];
+const DAYS = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 
-let S = {
-  periods: [], settings: { cycle:28, period:5, proj:3 },
-  vy: new Date().getFullYear(), vm: new Date().getMonth(),
-  sel: null, uid: null
-};
-let authMode = 'login';
-
-/* ── UI helpers ── */
-function showLoading(v, msg='Chargement...') {
-  document.getElementById('loading').style.display = v ? 'flex' : 'none';
-  document.getElementById('loading-text').textContent = msg;
-}
-function showApp(v) {
-  document.getElementById('auth-screen').style.display = v ? 'none' : 'flex';
-  document.getElementById('main-app').style.display    = v ? 'flex' : 'none';
-}
-let _tt;
-function toast(msg) {
-  clearTimeout(_tt);
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.classList.add('show');
-  _tt = setTimeout(() => el.classList.remove('show'), 2400);
-}
-function authError(msg) {
-  const el = document.getElementById('auth-error');
-  el.textContent = msg; el.style.display = msg ? 'block' : 'none';
-}
-
-/* ── Auth mode toggle ── */
-window.toggleAuthMode = () => {
-  authMode = authMode === 'login' ? 'register' : 'login';
-  authError('');
-  const isLogin = authMode === 'login';
-  document.getElementById('auth-mode-title').textContent = isLogin ? 'Connexion' : 'Créer un compte';
-  document.getElementById('auth-submit').textContent     = isLogin ? 'Se connecter' : 'Créer le compte';
-  document.getElementById('auth-toggle').innerHTML       = isLogin
-    ? 'Pas encore de compte ? <span>Créer un compte</span>'
-    : 'Déjà un compte ? <span>Se connecter</span>';
-};
-
-/* ── Auth submit ── */
-window.authSubmit = async () => {
-  authError('');
-  const email = document.getElementById('auth-email').value.trim();
-  const pass  = document.getElementById('auth-password').value;
-  if (!email || !pass) { authError('Remplis tous les champs.'); return; }
-  showLoading(true, authMode === 'login' ? 'Connexion...' : 'Création du compte...');
-  try {
-    if (authMode === 'login') await signInWithEmailAndPassword(auth, email, pass);
-    else                      await createUserWithEmailAndPassword(auth, email, pass);
-  } catch(e) {
-    showLoading(false);
-    const msgs = {
-      'auth/invalid-email':        'Email invalide.',
-      'auth/user-not-found':       'Aucun compte avec cet email.',
-      'auth/wrong-password':       'Mot de passe incorrect.',
-      'auth/invalid-credential':   'Email ou mot de passe incorrect.',
-      'auth/email-already-in-use': 'Cet email est déjà utilisé.',
-      'auth/weak-password':        'Le mot de passe doit faire au moins 6 caractères.',
-      'auth/too-many-requests':    'Trop de tentatives. Réessaie plus tard.'
-    };
-    authError(msgs[e.code] || 'Erreur : ' + e.message);
-  }
-};
-
-window.doLogout = async () => {
-  await signOut(auth);
-  S.periods = []; S.settings = { cycle:28, period:5, proj:3 }; S.sel = null; S.uid = null;
-};
-
-/* ── Firebase data ── */
-async function loadData(uid) {
-  const snap = await getDoc(doc(db, 'users', uid));
-  if (snap.exists()) {
-    const d = snap.data();
-    S.periods  = d.periods  || [];
-    S.settings = Object.assign({ cycle:28, period:5, proj:3 }, d.settings || {});
-  }
-}
-async function saveData() {
-  if (!S.uid) return;
-  await setDoc(doc(db, 'users', S.uid), { periods: S.periods, settings: S.settings }, { merge: true });
-}
-
-/* ── Auth observer ── */
-onAuthStateChanged(auth, async user => {
-  if (user) {
-    S.uid = user.uid;
-    document.getElementById('user-email').textContent = user.email;
-    showLoading(true, 'Chargement de tes données...');
-    try { await loadData(user.uid); } catch(e) { console.warn(e); }
-    showLoading(false);
-    showApp(true);
-    syncSett();
-    renderCal();
-  } else {
-    S.uid = null;
-    showLoading(false);
-    showApp(false);
-  }
+firebase.initializeApp({
+  apiKey: "AIzaSyCuDE-XpbpTQX7lVBWrwe3Ljr5GLeeCwBg",
+  authDomain: "budget-semaine-5e6a0.firebaseapp.com",
+  databaseURL: "https://budget-semaine-5e6a0-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "budget-semaine-5e6a0",
+  storageBucket: "budget-semaine-5e6a0.firebasestorage.app",
+  messagingSenderId: "450955927135",
+  appId: "1:450955927135:web:83e1e215a1a7d0522c45ea"
 });
+const db = firebase.database();
 
-/* ── Tab nav ── */
-const PAGE_TITLES = { home:'Mon cycle', hist:'Historique', sett:'Réglages' };
-window.goTab = tab => {
-  ['home','hist','sett'].forEach(t => {
-    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
-    const n  = document.getElementById('nav-'+t);
-    const on = t===tab;
-    n.classList.toggle('active', on);
-    n.querySelector('.nav-lbl').style.color = on ? 'var(--pink)' : '';
-    n.querySelectorAll('[stroke]').forEach(el => el.setAttribute('stroke', on ? '#E91E8C' : '#bbb'));
+let selCat = CATS[0].name;
+let selWho = 'moi';
+let txs = {};
+let myName = localStorage.getItem('myName') || '';
+let partnerName = localStorage.getItem('partnerName') || 'Ma femme';
+
+function init() {
+  if (!myName) { document.getElementById('setup-screen').style.display = 'block'; }
+  else { startApp(); }
+}
+
+function saveName() {
+  const val = document.getElementById('setup-name').value.trim();
+  if (!val) return;
+  myName = val;
+  localStorage.setItem('myName', myName);
+  document.getElementById('setup-screen').style.display = 'none';
+  startApp();
+}
+
+function startApp() {
+  const app = document.getElementById('app');
+  app.style.display = 'flex';
+  document.getElementById('user-name-label').textContent = myName;
+  document.getElementById('partner-label').textContent = partnerName;
+  buildCatGrid();
+  subscribeFirebase();
+  purgeOld();
+}
+
+function localDateStr(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
+function getWeekKey() {
+  const now = new Date();
+  // Use local day of week, not UTC
+  const dow = now.getDay() === 0 ? 7 : now.getDay();
+  // Clone using local date parts to avoid UTC shift
+  const mon = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (dow - 1));
+  return localDateStr(mon);
+}
+
+function getWeekRange(key) {
+  const mon = new Date(key + 'T12:00:00');
+  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  const o = {day:'numeric',month:'short'};
+  return mon.toLocaleDateString('fr-FR',o) + ' – ' + sun.toLocaleDateString('fr-FR',o);
+}
+
+function setSyncDot(state) {
+  const d = document.getElementById('sync-dot');
+  d.className = 'sync-dot' + (state==='ok'?'':state==='off'?' off':' loading');
+}
+
+function computeAdjustedBudget(callback) {
+  const cur = getWeekKey();
+  db.ref('weeks').once('value', snap => {
+    const all = snap.val() || {};
+    let carry = 0;
+    Object.entries(all).forEach(([k, v]) => {
+      if (k >= cur) return;
+      const spent = Object.values(v).reduce((s, t) => s + Number(t.amount), 0);
+      carry += (BUDGET_BASE - spent);
+    });
+    BUDGET = BUDGET_BASE + Math.round(carry);
+    callback();
   });
-  document.getElementById('page-title').textContent = PAGE_TITLES[tab];
-  document.getElementById('content').scrollTop = 0;
-  if (tab==='hist') renderHist();
-};
+}
 
-/* ── Data helpers ── */
-function periodDays() {
-  const s = new Set();
-  S.periods.forEach(p => {
-    const st = new Date(p.start);
-    const dur = p.end ? Math.round((new Date(p.end)-st)/86400000)+1 : S.settings.period;
-    for (let i=0;i<dur;i++){const d=new Date(st);d.setDate(d.getDate()+i);s.add(d.toISOString().slice(0,10));}
+function subscribeFirebase() {
+  computeAdjustedBudget(() => {
+    setSyncDot('loading');
+    db.ref('weeks/' + getWeekKey()).on('value', snap => {
+    txs = snap.val() || {};
+    setSyncDot('ok');
+    render();
+    }, () => setSyncDot('off'));
   });
-  return s;
 }
-function getProj() {
-  if (!S.periods.length) return [];
-  const sorted = [...S.periods].sort((a,b)=>new Date(a.start)-new Date(b.start));
-  let avg = S.settings.cycle;
-  if (sorted.length>1){let t=0;for(let i=1;i<sorted.length;i++)t+=(new Date(sorted[i].start)-new Date(sorted[i-1].start))/86400000;avg=Math.round(t/(sorted.length-1));}
-  const last = new Date(sorted[sorted.length-1].start);
-  return Array.from({length:S.settings.proj},(_,i)=>{const d=new Date(last);d.setDate(d.getDate()+avg*(i+1));return{start:d.toISOString().slice(0,10),dur:S.settings.period};});
+
+function isoToday() {
+  const now = new Date();
+  return localDateStr(new Date(now.getFullYear(), now.getMonth(), now.getDate()));
 }
-function projDays() {
-  const s=new Set();
-  getProj().forEach(p=>{const st=new Date(p.start);for(let i=0;i<p.dur;i++){const d=new Date(st);d.setDate(d.getDate()+i);s.add(d.toISOString().slice(0,10));}});
-  return s;
+
+function addTx() {
+  const amount = parseFloat(document.getElementById('f-amount').value);
+  if (!amount || amount <= 0) { document.getElementById('f-amount').focus(); return; }
+  const desc = document.getElementById('f-desc').value.trim();
+  const id = Date.now().toString();
+  const who = selWho === 'moi' ? myName : partnerName;
+  const dateVal = document.getElementById('f-date').value || isoToday();
+  setSyncDot('loading');
+  db.ref('weeks/' + getWeekKey() + '/' + id).set({id, desc, amount, cat:selCat, who, date:dateVal})
+    .then(() => { document.getElementById('f-amount').value=''; document.getElementById('f-desc').value=''; document.getElementById('f-date').value=isoToday(); setSyncDot('ok'); })
+    .catch(() => setSyncDot('off'));
 }
-function getFertile() {
-  const f=new Set(),ov=new Set();
-  [...S.periods.map(p=>p.start),...getProj().map(p=>p.start)].forEach(st=>{
-    const ovd=new Date(st);ovd.setDate(ovd.getDate()+S.settings.cycle-14);
-    ov.add(ovd.toISOString().slice(0,10));
-    for(let i=-5;i<=1;i++){const fd=new Date(ovd);fd.setDate(fd.getDate()+i);const k=fd.toISOString().slice(0,10);if(!ov.has(k))f.add(k);}
+
+function delTx(id) {
+  setSyncDot('loading');
+  db.ref('weeks/' + getWeekKey() + '/' + id).remove()
+    .then(()=>setSyncDot('ok')).catch(()=>setSyncDot('off'));
+}
+
+function clearWeek() {
+  if (!Object.keys(txs).length) return;
+  if (!confirm('Effacer toutes les dépenses de cette semaine ?')) return;
+  setSyncDot('loading');
+  db.ref('weeks/' + getWeekKey()).remove()
+    .then(()=>setSyncDot('ok')).catch(()=>setSyncDot('off'));
+}
+
+function purgeOld() {
+  const cutoff = new Date(); cutoff.setMonth(cutoff.getMonth()-6);
+  const cut = cutoff.toISOString().split('T')[0];
+  db.ref('weeks').once('value', snap => {
+    const all = snap.val()||{};
+    Object.keys(all).forEach(k=>{ if(k<cut) db.ref('weeks/'+k).remove(); });
   });
-  return{f,ov};
 }
 
-/* ── Calendar ── */
-function renderCal() {
-  const{vy:y,vm:m}=S;
-  document.getElementById('cal-month').textContent=`${MONTHS[m]} ${y}`;
-  const pd=periodDays(),prd=projDays(),{f,ov}=getFertile();
-  const today=new Date().toISOString().slice(0,10);
-  const grid=document.getElementById('cal-grid');
-  grid.innerHTML='';
-  DAYS.forEach(d=>{const e=document.createElement('div');e.className='cal-hdr';e.textContent=d;grid.appendChild(e);});
-  const off=(new Date(y,m,1).getDay()+6)%7;
-  for(let i=0;i<off;i++){const e=document.createElement('div');e.className='day empty';grid.appendChild(e);}
-  const dim=new Date(y,m+1,0).getDate();
-  for(let d=1;d<=dim;d++){
-    const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const e=document.createElement('div');e.className='day';e.textContent=d;
-    if(ov.has(ds))e.classList.add('ovulation');
-    else if(f.has(ds))e.classList.add('fertile');
-    if(pd.has(ds))e.classList.add('period');
-    else if(prd.has(ds))e.classList.add('predicted');
-    if(ds===today)e.classList.add('today');
-    if(S.sel===ds)e.classList.add('selected');
-    e.addEventListener('click',()=>selectDay(ds));
-    grid.appendChild(e);
-  }
-  updateBanner();updateStats();updatePhase();updateCycBar();
-}
-window.prevMonth=()=>{S.vm--;if(S.vm<0){S.vm=11;S.vy--;}renderCal();};
-window.nextMonth=()=>{S.vm++;if(S.vm>11){S.vm=0;S.vy++;}renderCal();};
+function fmt(n) { return Math.round(n).toLocaleString('fr-FR')+' FCFP'; }
+function fmtS(n) { return Math.round(n).toLocaleString('fr-FR'); }
 
-function selectDay(ds){
-  S.sel=ds;
-  const[y,mo,d]=ds.split('-').map(Number);
-  const lbl=new Date(y,mo-1,d).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  const el=document.getElementById('sel-show');
-  el.textContent=lbl.charAt(0).toUpperCase()+lbl.slice(1);
-  el.classList.remove('ph');
-  renderCal();
+function buildCatGrid() {
+  document.getElementById('cat-grid').innerHTML = CATS.map(c=>`
+    <button class="cat-btn${c.name===selCat?' active':''}" onclick="pickCat('${c.name}',this)">
+      <span class="ce">${c.icon}</span><span>${c.name}</span>
+    </button>`).join('');
 }
 
-window.logStart=async()=>{
-  if(!S.sel){toast('Sélectionne d\'abord un jour');return;}
-  if(S.periods.find(p=>p.start===S.sel)){toast('Début déjà enregistré');return;}
-  S.periods.push({start:S.sel,end:null});
-  S.periods.sort((a,b)=>new Date(a.start)-new Date(b.start));
-  renderCal();toast('Début des règles enregistré ✓');
-  try{await saveData();}catch(e){toast('Erreur de sauvegarde');}
-};
-
-window.logEnd=async()=>{
-  if(!S.sel){toast('Sélectionne d\'abord un jour');return;}
-  const sorted=[...S.periods].sort((a,b)=>new Date(a.start)-new Date(b.start));
-  const last=sorted[sorted.length-1];
-  if(!last){toast('Enregistre d\'abord un début');return;}
-  if(new Date(S.sel)<new Date(last.start)){toast('La fin doit être après le début');return;}
-  S.periods[S.periods.findIndex(p=>p.start===last.start)].end=S.sel;
-  renderCal();toast('Fin des règles enregistrée ✓');
-  try{await saveData();}catch(e){toast('Erreur de sauvegarde');}
-};
-
-function updateBanner(){
-  const proj=getProj();const b=document.getElementById('next-banner');
-  if(!proj.length){b.style.display='none';return;}
-  b.style.display='';
-  const next=new Date(proj[0].start);const today=new Date();today.setHours(0,0,0,0);
-  const diff=Math.round((next-today)/86400000);
-  document.getElementById('nb-date').textContent=next.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('nb-days').textContent=diff>0?`Dans ${diff} jour${diff>1?'s':''}`:diff===0?'Aujourd\'hui':`Il y a ${Math.abs(diff)} jour${Math.abs(diff)>1?'s':''}`;
-}
-function updateStats(){
-  const sorted=[...S.periods].sort((a,b)=>new Date(a.start)-new Date(b.start));
-  document.getElementById('st-count').textContent=sorted.length;
-  if(sorted.length>1){let t=0;for(let i=1;i<sorted.length;i++)t+=(new Date(sorted[i].start)-new Date(sorted[i-1].start))/86400000;document.getElementById('st-cycle').textContent=Math.round(t/(sorted.length-1));}
-  else document.getElementById('st-cycle').textContent=S.settings.cycle;
-  const we=sorted.filter(p=>p.end);
-  if(we.length){let t=0;we.forEach(p=>t+=(new Date(p.end)-new Date(p.start))/86400000+1);document.getElementById('st-period').textContent=Math.round(t/we.length);}
-  else document.getElementById('st-period').textContent=S.settings.period;
-}
-function updatePhase(){
-  if(!S.periods.length){document.getElementById('phase-card').style.display='none';return;}
-  const sorted=[...S.periods].sort((a,b)=>new Date(a.start)-new Date(b.start));
-  const last=new Date(sorted[sorted.length-1].start);
-  const today=new Date();today.setHours(0,0,0,0);
-  let day=Math.round((today-last)/86400000)%S.settings.cycle;if(day<0)day+=S.settings.cycle;
-  const ph=day<S.settings.period?0:day<Math.round(S.settings.cycle*0.45)?1:day<Math.round(S.settings.cycle*0.55)?2:3;
-  const pc=document.getElementById('phase-card'),p=PHASES[ph];
-  pc.style.display='';pc.style.borderLeftColor=p.col;
-  const badge=document.getElementById('phase-badge');badge.textContent=p.name;badge.style.background=p.bg;badge.style.color=p.col;
-  document.getElementById('phase-name').textContent=p.name;document.getElementById('phase-name').style.color=p.col;
-  document.getElementById('phase-desc').textContent=p.desc;
-}
-function updateCycBar(){
-  if(!S.periods.length){document.getElementById('cyc-wrap').style.display='none';return;}
-  const sorted=[...S.periods].sort((a,b)=>new Date(a.start)-new Date(b.start));
-  const last=new Date(sorted[sorted.length-1].start);
-  const today=new Date();today.setHours(0,0,0,0);
-  let day=Math.round((today-last)/86400000)%S.settings.cycle;if(day<0)day+=S.settings.cycle;
-  document.getElementById('cyc-wrap').style.display='';
-  document.getElementById('cyc-label').textContent=`Jour ${day+1} sur ${S.settings.cycle}`;
-  document.getElementById('cyc-fill').style.width=Math.min(100,Math.round((day/S.settings.cycle)*100))+'%';
+function pickCat(name, el) {
+  selCat = name;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
 }
 
-/* ── History ── */
-function renderHist(){
-  const sorted=[...S.periods].sort((a,b)=>new Date(b.start)-new Date(a.start));
-  const list=document.getElementById('hist-list');
-  if(!sorted.length){list.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Aucun cycle enregistré</div></div>';return;}
-  list.innerHTML='';
-  sorted.forEach(p=>{
-    const st=new Date(p.start);
-    const dur=p.end?Math.round((new Date(p.end)-st)/86400000)+1:null;
-    const el=document.createElement('div');el.className='hist-item';
-    el.innerHTML=`<div><div class="hist-date">${st.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</div><div class="hist-sub">${dur?dur+' jours de règles':'Fin non renseignée'}</div></div><div class="hist-right"><span class="hist-badge">${dur?dur+'j':'?'}</span><button class="del-btn" data-start="${p.start}">✕</button></div>`;
-    list.appendChild(el);
+function pickWho(who, el) {
+  selWho = who;
+  document.querySelectorAll('.who-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function render() {
+  const list = Object.values(txs);
+  const total = list.reduce((s,t)=>s+Number(t.amount),0);
+  const remain = BUDGET - total;
+  const pct = Math.min(Math.round(total/BUDGET*100),100);
+  const dayIdx = new Date().getDay()===0?7:new Date().getDay();
+
+  document.getElementById('stat-spent').textContent = fmtS(total);
+  document.getElementById('stat-remain').textContent = fmtS(Math.max(remain,0));
+  document.getElementById('stat-remain').className = 'stat-val '+(remain<0?'red':'grn');
+  document.getElementById('stat-avg').textContent = fmtS(Math.round(total/dayIdx));
+
+  document.getElementById('header-extra').innerHTML = `
+    <div style="padding-bottom:20px;">
+      <div style="font-size:12px;opacity:.75;margin-bottom:2px;">${getWeekRange(getWeekKey())}</div>
+      <div style="font-size:12px;opacity:.75;margin-bottom:4px;">Il reste</div>
+      <div style="font-size:40px;font-weight:600;letter-spacing:-1px;color:${remain<0?'#FAC775':'white'};line-height:1;margin-bottom:6px;">${remain>=0?fmt(remain):'- '+fmt(Math.abs(remain))}</div>
+      <div style="font-size:12px;opacity:.75;margin-bottom:16px;">sur ${fmt(BUDGET)} · ${fmt(total)} dépensé${BUDGET !== BUDGET_BASE ? ' <span style=\"background:rgba(255,255,255,0.2);padding:1px 8px;border-radius:20px;\">' + (BUDGET > BUDGET_BASE ? '+' : '') + fmt(BUDGET - BUDGET_BASE).replace(' FCFP','') + ' report</span>' : ''}</div>
+      <div style="background:rgba(255,255,255,0.2);border-radius:6px;height:8px;overflow:hidden;margin-bottom:6px;">
+        <div style="height:100%;width:${pct}%;border-radius:6px;background:${pct>=100?'#F09595':pct>=80?'#FAC775':'white'};transition:width .5s;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;opacity:.75;">
+        <span>${pct}% utilisé</span><span>${fmt(BUDGET)}</span>
+      </div>
+    </div>`;
+
+  const ab = document.getElementById('alert-box');
+  if (remain<0){ab.className='alert show danger';ab.textContent='⚠️ Budget dépassé de '+fmt(Math.abs(remain))+' !';}
+  else if(pct>=80){ab.className='alert show warn';ab.textContent='⚠️ '+pct+'% utilisé — il reste '+fmt(remain)+'.';}
+  else{ab.className='alert';}
+
+  renderList(list);
+}
+
+function renderList(list) {
+  const el = document.getElementById('tx-list');
+  if (!list.length){el.innerHTML='<div class="empty-msg">Aucune dépense cette semaine 🎉</div>';return;}
+  const sorted=[...list].sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id));
+  const grouped={};
+  sorted.forEach(t=>{if(!grouped[t.date])grouped[t.date]=[];grouped[t.date].push(t);});
+  el.innerHTML=Object.entries(grouped).map(([date,items])=>{
+    const d=new Date(date+'T12:00:00');
+    const dayTotal=items.reduce((s,t)=>s+Number(t.amount),0);
+    const hdr=`<div class="day-label">${DAYS[d.getDay()]} ${d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} — ${fmt(dayTotal)}</div>`;
+    const rows=items.map(t=>{
+      const cat=CATS.find(c=>c.name===t.cat)||CATS[7];
+      const isMe=t.who===myName;
+      return `<div class="tx-item">
+        <div class="tx-ico" style="background:${cat.bg}">${cat.icon}</div>
+        <div class="tx-info">
+          <div class="tx-name">${t.desc||t.cat}</div>
+          <div class="tx-meta">${t.cat} <span class="who-badge ${isMe?'moi':'elle'}">${t.who}</span></div>
+        </div>
+        <div class="tx-right">
+          <div class="tx-amt">-${fmt(Number(t.amount))}</div>
+          <button class="tx-del" onclick="delTx('${t.id}')">×</button>
+        </div>
+      </div>`;
+    }).join('');
+    return hdr+rows;
+  }).join('');
+}
+
+function renderHistory() {
+  db.ref('weeks').once('value', snap=>{
+    const all=snap.val()||{};
+    const cur=getWeekKey();
+    const past=Object.entries(all)
+      .filter(([k])=>k!==cur)
+      .map(([k,v])=>{const l=Object.values(v);return{weekKey:k,spent:l.reduce((s,t)=>s+Number(t.amount),0),count:l.length};})
+      .sort((a,b)=>b.weekKey.localeCompare(a.weekKey));
+    const el=document.getElementById('hist-list');
+    if(!past.length){el.innerHTML='<div class="empty-msg">Aucun historique pour l\'instant.</div>';return;}
+    el.innerHTML=past.map(h=>{
+      const pct=Math.round(h.spent/BUDGET_BASE*100);
+      const diff = BUDGET_BASE - h.spent;
+      const diffLabel = diff >= 0 ? '+'+fmt(diff) : '-'+fmt(Math.abs(diff));
+      const diffColor = diff >= 0 ? 'var(--green)' : 'var(--red)';
+      return `<div class="hist-item">
+        <div><div class="hist-week">${getWeekRange(h.weekKey)}</div><div class="hist-dates">${h.count} dépense${h.count>1?'s':''} · <span style="color:${diffColor};font-weight:600;">${diffLabel} reporté</span></div></div>
+        <div style="text-align:right"><div class="hist-amt ${h.spent>BUDGET_BASE?'over':'ok'}" style="font-size:15px;font-weight:600;">${fmt(h.spent)}</div><div class="hist-pct">${pct}% du budget</div></div>
+      </div>`;
+    }).join('');
   });
-  list.querySelectorAll('.del-btn').forEach(btn=>btn.addEventListener('click',()=>delPeriod(btn.dataset.start)));
 }
-async function delPeriod(start){
-  if(!confirm('Supprimer ce cycle ?'))return;
-  S.periods=S.periods.filter(p=>p.start!==start);
-  renderHist();renderCal();toast('Cycle supprimé');
-  try{await saveData();}catch(e){}
-}
-window.clearAll=async()=>{
-  if(!confirm('Effacer toutes les données ?'))return;
-  S.periods=[];renderHist();renderCal();toast('Données effacées');
-  try{await saveData();}catch(e){}
-};
 
-/* ── Settings ── */
-const LIM={cycle:[20,45],period:[1,10],proj:[1,12]};
-window.adj=async(k,d)=>{
-  S.settings[k]=Math.max(LIM[k][0],Math.min(LIM[k][1],S.settings[k]+d));
-  syncSett();renderCal();
-  try{await saveData();}catch(e){}
-};
-function syncSett(){
-  document.getElementById('sv-cycle').textContent=S.settings.cycle;
-  document.getElementById('sv-period').textContent=S.settings.period;
-  document.getElementById('sv-proj').textContent=S.settings.proj;
+function switchTab(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='hist') renderHistory();
 }
+
+document.getElementById('f-amount').addEventListener('keydown',e=>{if(e.key==='Enter')addTx();});
+document.getElementById('f-desc').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('f-amount').focus();});
+document.getElementById('setup-name').addEventListener('keydown',e=>{if(e.key==='Enter')saveName();});
+
+document.getElementById('f-date').value = isoToday();
+init();
 </script>
 </body>
 </html>
