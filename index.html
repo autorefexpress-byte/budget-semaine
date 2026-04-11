@@ -178,7 +178,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-const BUDGET = 30000;
+const BUDGET_BASE = 30000;
+let BUDGET = 30000;
 const CATS = [
   {name:'Courses',    icon:'🛒', bg:'#e8f0fb'},
   {name:'Voiture',   icon:'🚗', bg:'#fef3e2'},
@@ -232,11 +233,17 @@ function startApp() {
   purgeOld();
 }
 
+function localDateStr(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
 function getWeekKey() {
   const d = new Date();
-  const day = d.getDay() === 0 ? 7 : d.getDay();
-  const mon = new Date(d); mon.setDate(d.getDate() - (day - 1));
-  return mon.toISOString().split('T')[0];
+  const dow = d.getDay() === 0 ? 7 : d.getDay();
+  const mon = new Date(d); mon.setDate(d.getDate() - (dow - 1));
+  return localDateStr(mon);
 }
 
 function getWeekRange(key) {
@@ -251,16 +258,33 @@ function setSyncDot(state) {
   d.className = 'sync-dot' + (state==='ok'?'':state==='off'?' off':' loading');
 }
 
+function computeAdjustedBudget(callback) {
+  const cur = getWeekKey();
+  db.ref('weeks').once('value', snap => {
+    const all = snap.val() || {};
+    let carry = 0;
+    Object.entries(all).forEach(([k, v]) => {
+      if (k >= cur) return;
+      const spent = Object.values(v).reduce((s, t) => s + Number(t.amount), 0);
+      carry += (BUDGET_BASE - spent);
+    });
+    BUDGET = BUDGET_BASE + Math.round(carry);
+    callback();
+  });
+}
+
 function subscribeFirebase() {
-  setSyncDot('loading');
-  db.ref('weeks/' + getWeekKey()).on('value', snap => {
+  computeAdjustedBudget(() => {
+    setSyncDot('loading');
+    db.ref('weeks/' + getWeekKey()).on('value', snap => {
     txs = snap.val() || {};
     setSyncDot('ok');
     render();
-  }, () => setSyncDot('off'));
+    }, () => setSyncDot('off'));
+  });
 }
 
-function isoToday() { return new Date().toISOString().split('T')[0]; }
+function isoToday() { return localDateStr(new Date()); }
 
 function addTx() {
   const amount = parseFloat(document.getElementById('f-amount').value);
@@ -337,7 +361,7 @@ function render() {
       <div style="font-size:12px;opacity:.75;margin-bottom:2px;">${getWeekRange(getWeekKey())}</div>
       <div style="font-size:12px;opacity:.75;margin-bottom:4px;">Il reste</div>
       <div style="font-size:40px;font-weight:600;letter-spacing:-1px;color:${remain<0?'#FAC775':'white'};line-height:1;margin-bottom:6px;">${remain>=0?fmt(remain):'- '+fmt(Math.abs(remain))}</div>
-      <div style="font-size:12px;opacity:.75;margin-bottom:16px;">sur ${fmt(BUDGET)} · ${fmt(total)} dépensé</div>
+      <div style="font-size:12px;opacity:.75;margin-bottom:16px;">sur ${fmt(BUDGET)} · ${fmt(total)} dépensé${BUDGET !== BUDGET_BASE ? ' <span style=\"background:rgba(255,255,255,0.2);padding:1px 8px;border-radius:20px;\">' + (BUDGET > BUDGET_BASE ? '+' : '') + fmt(BUDGET - BUDGET_BASE).replace(' FCFP','') + ' report</span>' : ''}</div>
       <div style="background:rgba(255,255,255,0.2);border-radius:6px;height:8px;overflow:hidden;margin-bottom:6px;">
         <div style="height:100%;width:${pct}%;border-radius:6px;background:${pct>=100?'#F09595':pct>=80?'#FAC775':'white'};transition:width .5s;"></div>
       </div>
@@ -394,10 +418,13 @@ function renderHistory() {
     const el=document.getElementById('hist-list');
     if(!past.length){el.innerHTML='<div class="empty-msg">Aucun historique pour l\'instant.</div>';return;}
     el.innerHTML=past.map(h=>{
-      const pct=Math.round(h.spent/BUDGET*100);
+      const pct=Math.round(h.spent/BUDGET_BASE*100);
+      const diff = BUDGET_BASE - h.spent;
+      const diffLabel = diff >= 0 ? '+'+fmt(diff) : '-'+fmt(Math.abs(diff));
+      const diffColor = diff >= 0 ? 'var(--green)' : 'var(--red)';
       return `<div class="hist-item">
-        <div><div class="hist-week">${getWeekRange(h.weekKey)}</div><div class="hist-dates">${h.count} dépense${h.count>1?'s':''}</div></div>
-        <div style="text-align:right"><div class="hist-amt ${h.spent>BUDGET?'over':'ok'}" style="font-size:15px;font-weight:600;">${fmt(h.spent)}</div><div class="hist-pct">${pct}% du budget</div></div>
+        <div><div class="hist-week">${getWeekRange(h.weekKey)}</div><div class="hist-dates">${h.count} dépense${h.count>1?'s':''} · <span style="color:${diffColor};font-weight:600;">${diffLabel} reporté</span></div></div>
+        <div style="text-align:right"><div class="hist-amt ${h.spent>BUDGET_BASE?'over':'ok'}" style="font-size:15px;font-weight:600;">${fmt(h.spent)}</div><div class="hist-pct">${pct}% du budget</div></div>
       </div>`;
     }).join('');
   });
