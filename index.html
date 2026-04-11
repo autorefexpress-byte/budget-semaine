@@ -240,9 +240,11 @@ function localDateStr(d) {
   return y+'-'+m+'-'+day;
 }
 function getWeekKey() {
-  const d = new Date();
-  const dow = d.getDay() === 0 ? 7 : d.getDay();
-  const mon = new Date(d); mon.setDate(d.getDate() - (dow - 1));
+  const now = new Date();
+  // Use local day of week, not UTC
+  const dow = now.getDay() === 0 ? 7 : now.getDay();
+  // Clone using local date parts to avoid UTC shift
+  const mon = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (dow - 1));
   return localDateStr(mon);
 }
 
@@ -284,7 +286,10 @@ function subscribeFirebase() {
   });
 }
 
-function isoToday() { return localDateStr(new Date()); }
+function isoToday() {
+  const now = new Date();
+  return localDateStr(new Date(now.getFullYear(), now.getMonth(), now.getDate()));
+}
 
 function addTx() {
   const amount = parseFloat(document.getElementById('f-amount').value);
