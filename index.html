@@ -7,6 +7,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#1a56a0">
 <title>Budget semaine</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Budget">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icon.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
 :root{--blue:#1a56a0;--blue-light:#e8f0fb;--red:#c0392b;--red-light:#fdecea;--orange:#d4720a;--orange-light:#fef3e2;--green:#1e7e4a;--bg:#f2f4f8;--card:#ffffff;--text:#1a1a2e;--muted:#7a7f9a;--border:rgba(0,0,0,0.08);--radius:18px;--radius-sm:12px;}
@@ -109,7 +113,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <div class="header">
     <div class="header-top">
       <h1>Budget semaine <span class="sync-dot loading" id="sync-dot"></span></h1>
-      <span style="font-size:12px;opacity:.75;" id="user-name-label"></span>
+      <span style="font-size:12px;opacity:.75;cursor:pointer;text-decoration:underline dotted;" id="user-name-label" onclick="editName()" title="Modifier mon prénom"></span>
     </div>
     <div id="header-extra"></div>
   </div>
@@ -227,6 +231,7 @@ function startApp() {
   const app = document.getElementById('app');
   app.style.display = 'flex';
   document.getElementById('user-name-label').textContent = myName;
+  document.getElementById('user-name-label').title = 'Appuie pour modifier ton prénom';
   document.getElementById('partner-label').textContent = partnerName;
   buildCatGrid();
   subscribeFirebase();
@@ -441,6 +446,16 @@ function switchTab(name) {
   document.getElementById('screen-'+name).classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
   if(name==='hist') renderHistory();
+}
+
+function editName() {
+  const newName = prompt('Modifier ton prénom :', myName);
+  if (newName && newName.trim()) {
+    myName = newName.trim();
+    localStorage.setItem('myName', myName);
+    document.getElementById('user-name-label').textContent = myName + ' ✏️';
+    setTimeout(() => document.getElementById('user-name-label').textContent = myName, 2000);
+  }
 }
 
 document.getElementById('f-amount').addEventListener('keydown',e=>{if(e.key==='Enter')addTx();});
