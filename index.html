@@ -344,6 +344,7 @@ let openDepMonth = false;
 // ─── UTILS ───────────────────────────────────────────────────
 function fmt(n){return Math.round(n).toLocaleString('fr-FR')+' FCFP';}
 function fmtS(n){return Math.round(n).toLocaleString('fr-FR');}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function localDateStr(d){const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day;}
 function isoToday(){const now=new Date();return localDateStr(new Date(now.getFullYear(),now.getMonth(),now.getDate()));}
 function getWeekKey(){const now=new Date();const dow=now.getDay()===0?7:now.getDay();const mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-(dow-1));return localDateStr(mon);}
@@ -464,7 +465,7 @@ function renderList(list){
       const isMe=t.who===myName;
       return `<div class="tx-item">
         <div class="tx-ico" style="background:${cat.bg}">${cat.icon}</div>
-        <div class="tx-info"><div class="tx-name">${t.desc||t.cat}</div><div class="tx-meta">${t.cat} <span class="who-badge ${isMe?'moi':'elle'}">${t.who}</span></div></div>
+        <div class="tx-info"><div class="tx-name">${esc(t.desc||t.cat)}</div><div class="tx-meta">${esc(t.cat)} <span class="who-badge ${isMe?'moi':'elle'}">${esc(t.who)}</span></div></div>
         <div class="tx-right"><div class="tx-amt">-${fmt(Number(t.amount))}</div><button class="tx-del" onclick="delTx('${t.id}')">×</button></div>
       </div>`;
     }).join('');
@@ -670,7 +671,7 @@ function renderTxList(list,type){
       const cat=CATS.find(c=>c.name===t.cat)||CATS[7];
       return `<div class="dp-tx-item ${type==='month'?'month-tx':''}">
         <div class="dp-tx-ico" style="background:${cat.bg}">${cat.icon}</div>
-        <div class="dp-tx-info"><div class="dp-tx-name">${t.desc||t.cat}</div><div class="dp-tx-sub">${t.cat} · ${t.who}</div></div>
+        <div class="dp-tx-info"><div class="dp-tx-name">${esc(t.desc||t.cat)}</div><div class="dp-tx-sub">${esc(t.cat)} · ${esc(t.who)}</div></div>
         <div class="dp-tx-amt">−${fmtS(Number(t.amount))} F</div>
       </div>`;
     }).join('');
